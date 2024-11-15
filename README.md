@@ -190,3 +190,40 @@ def mergeTwoLists(
 
 - Time Complexity: `O(n + m)`, where `n` and `m` are the lengths of the first and second list. 
 - Space Complexity: `O(1)`. The solution creates a dummy node and a `curr` pointer, but their space usage does not scale with the input size.
+
+## Best Time to Buy and Sell Stock
+[LeetCode Question](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/)
+
+#### Solutions:
+1. **Greedy Algorithm (One Pass)**: Calculate the maximum profit in a single iteration by tracking the minimum price seen so far and updating the profit accordingly.
+
+#### Greedy Algorithm (One Pass) Solution
+
+This solution maintains two variables while iterating through the `prices` array:
+
+1. `min_price`: Tracks the lowest stock price observed so far, initialized to infinity to simulate that no stock has been bought yet.
+2. `profit`: Tracks the maximum profit observed so far, initialized to `0` since no transaction has occurred yet.
+
+For each price in the array:
+- Simulate selling by calculating the difference between the current price and `min_price` to get the current profit.
+- If the current profit exceeds the previously recorded maximum, update `profit`.
+- If the current price is lower than `min_price`, update `min_price`.
+
+By the end of the iteration, `profit` will hold the maximum achievable profit.
+
+```python
+def maxProfit(self, prices: List[int]) -> int:
+        profit = 0
+        min_price = float('inf')
+
+        for price in prices:
+            profit = max(profit, price - min_price)
+            min_price = min(min_price, price)
+
+        return profit
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. The solution iterates through the prices array once, where `n` is the length of the array.
+- Space Complexity: `O(1)`. Only two variables (`profit` and `min_price`) are used, making the space usage constant.
