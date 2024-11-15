@@ -4,11 +4,11 @@ This document contains concise notes for each question from [Grind 75](https://w
 
 
 ## Two Sum
-[Leet Code Question](https://leetcode.com/problems/two-sum/description/)
+[LeetCode Question](https://leetcode.com/problems/two-sum/description/)
 
 #### Solutions
-1. **Brute Force**: Iterate through all pairs until the target sum is found.
-2. **Hash Table**: Use a hash table to store values as you iterate, achieving an efficient single-loop solution.
+1. **Brute Force:** Iterate through all pairs until the target sum is found.
+2. **Hash Table:** Use a hash table to store values as you iterate, achieving an efficient single-loop solution.
 
 #### Brute Force Solution
 
@@ -61,10 +61,10 @@ def twoSum(self, nums: List[int], target: int) -> List[int]:
 - Space Complexity: `O(n)`, since in the worst case, the code may insert each element of the array into the hash table, hence the space used by the hash table grows linearly with the number of elements in the array.
 
 ## Valid Parentheses
-[Leet Code Question](https://leetcode.com/problems/valid-parentheses/description/)
+[LeetCode Question](https://leetcode.com/problems/valid-parentheses/description/)
 
 #### Solutions:
-1. **Stack**: Use a stack to track opening brackets and ensure they are closed in the correct order.
+1. **Stack:** Use a stack to track opening brackets and ensure they are closed in the correct order.
 
 #### [Good To Know 📚] Stack
 [Stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)) is a data structure following the `first in, last out` (FILO) principle. It supports three main operations:
@@ -110,3 +110,83 @@ def isValid(self, s: str) -> bool:
 
 - Time Complexity: `O(n)`, as we iterate through the string once.
 - Space Complexity: `O(n)` in the worst case (when all characters are opening brackets and are pushed onto the stack). The actual space usage depends on the number of unmatched opening brackets, which can vary from O(1) (e.g., empty string or single valid pair) to O(n) (when all characters are a opening bracket).
+
+
+## Merge Two Sorted Lists
+[LeetCode Question](https://leetcode.com/problems/merge-two-sorted-lists/description/)
+
+#### Solutions:
+1. **Two Pointer:** Traverse both lists simultaneously, always selecting the next smallest element to add to the merged linked list.
+
+#### [Good To Know 📚] Linked List
+[Linked list](https://en.wikipedia.org/wiki/Linked_list) is a linear collection of elements where each element points to the next. It is a data structure consisting of a collection of nodes that represent a sequence.
+
+Each node contains two fields: data and a reference to the next node:
+
+![image](https://github.com/user-attachments/assets/a4cc8ba7-c2e7-4e34-8ed9-97ffd14fbaf0)
+
+Elements in a linked list can be easily inserted or removed without reallocation or reorganization of the entire structure because the data items do not need to be stored contiguously in memory or on disk. This is the main benefit over a conventional array, where restructuring at run-time is a much more expensive operation. However, data access time is linear relative to the number of nodes in the list. Because nodes are sequentially linked, accessing any node requires accessing the prior node first (which introduces difficulties in pipelining). Faster access, such as random access, is not feasible. Arrays have better cache locality compared to linked lists.
+
+
+Variations of linked lists:
+
+- **Singly linked list**: Contains nodes with a 'value' field and a 'next' field, which points to the next node in the sequence. Operations include insertion, deletion, and traversal.
+
+![image](https://github.com/user-attachments/assets/5a5e4322-9ea4-460d-b6bb-fcc3d0248211)
+
+- **Doubly linked list**: Each node contains, besides the next-node link, a second link field pointing to the 'previous' node in the sequence. The two links may be called 'forward' and 'backward', or 'next' and 'prev' (previous).
+
+![image](https://github.com/user-attachments/assets/6611caa5-8be6-43cc-a362-89f95030bf1d)
+
+- **Multiply linked list**: Each node contains two or more link fields, each used to connect the same set of data arranged in different orders (e.g., by name, by department, by date of birth, etc.). While a doubly linked list can be seen as a special case of a multiply linked list, having two or more orderings that are opposite to each other leads to simpler and more efficient algorithms, so they are usually treated as a separate case.
+
+- **Circular linked list**: In a circular linked list, the last node points back to the first node instead of containing a null reference. This makes the list circular. If the last node's "next" pointer points to null, it is an open or linear list.
+
+![image](https://github.com/user-attachments/assets/ac42f5ab-b7ff-4adc-bbb0-50fae40206ad)
+
+**Time Complexities:**
+
+1. **Peek (access by index)**: `O(n)`
+2. **Insert or delete at beginning**: `O(1)`
+3. **Insert or delete at end**: `O(1)` if the end is known; otherwise `O(n)`
+4. **Insert or delete in the middle**: `O(n)`
+
+#### Two Pointers Solution
+
+Since both lists are already sorted, we can compare the nodes from both lists and select the smaller one to add to the merged list until one of the lists is exhausted.
+
+1. **Create a dummy node**: A dummy node is used to simplify edge cases where the head of the merged list is not known initially.
+2. **Initialize a pointer `curr`**: This pointer tracks the end of the merged list and starts at the dummy node.
+3. **Traverse both lists**:
+    - Compare the current nodes of both lists.
+    - Append the smaller node to `curr.next`.
+    - Move the pointer of the list from which the node was taken forward.
+    - Move `curr` to the next node.
+4. **Append the remaining nodes**: Once one list is exhausted, append the remaining nodes from the other list.
+
+```python
+def mergeTwoLists(
+        self, list1: Optional[ListNode], list2: Optional[ListNode]
+    ) -> Optional[ListNode]:
+        dummy = ListNode()
+        curr = dummy
+
+        while list1 and list2:
+            if list1.val <= list2.val:
+                curr.next = list1
+                list1 = list1.next
+            else:
+                curr.next = list2
+                list2 = list2.next
+
+            curr = curr.next
+
+        curr.next = list1 if list1 else list2
+
+        return dummy.next
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n + m)`, where `n` and `m` are the lengths of the first and second list. 
+- Space Complexity: `O(1)`. The solution creates a dummy node and a `curr` pointer, but their space usage does not scale with the input size.
