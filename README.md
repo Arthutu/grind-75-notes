@@ -227,3 +227,69 @@ def maxProfit(self, prices: List[int]) -> int:
 
 - Time Complexity: `O(n)`. The solution iterates through the prices array once, where `n` is the length of the array.
 - Space Complexity: `O(1)`. Only two variables (`profit` and `min_price`) are used, making the space usage constant.
+
+## Valid Palindrome
+[LeetCode Question](https://leetcode.com/problems/valid-palindrome/description/)
+
+#### Solutions:
+1. **Two Pointer**: Use two pointers starting from the edges of the string and moving towards the center. Check if the characters match, skipping non-alphanumeric characters.
+2. **Pythonic**: Format the string to remove non-alphanumeric characters and compare it with its reversed version.
+
+#### Two Pointer Solution
+
+This approach uses two pointers:
+
+- **Left pointer (`l`)**: Starts at the beginning of the string.
+- **Right pointer (`r`)**: Starts at the end of the string.
+
+**Steps**:
+1. Skip non-alphanumeric characters by incrementing/decrementing the pointers as needed.
+2. If the characters at `l` and `r` are equal (ignoring case), move both pointers inward.
+3. If the characters differ, return `False` as the string is not a palindrome.
+4. If the loop completes, return `True` since the string is a valid palindrome.
+
+```python
+def isPalindrome(self, s: str) -> bool:
+        l, r = 0, len(s) - 1
+
+        while l < r:
+            while l < r and not s[l].isalnum():
+                l += 1
+            while l < r and not s[r].isalnum():
+                r -= 1
+            if s[l].lower() != s[r].lower(): 
+                return False
+                
+            l += 1
+            r -= 1
+
+        return True
+```
+
+Note that a boundary check is performed in the inner while loop, since by incrementing/decrementing l/r, the outer loop condition `l < r` might be violated.
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, as each character is processed at most once.
+- Space Complexity: `O(1)`, since no extra space is used.
+
+#### Pythonic Solution
+
+This approach simplifies the problem using Python's built-in string manipulation capabilities.
+
+**Steps**:
+1. Create a "cleaned" version of the string by:
+   - Removing non-alphanumeric characters.
+   - Converting all characters to lowercase.
+2. Compare the cleaned string to its reversed version.
+
+```python
+def isPalindrome(self, s: str) -> bool:
+        clean_str = ''.join(char.lower() for char in s if char.isalnum())
+        return clean_str == clean_str[::-1]
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(2*n)`, as the string is iterated twice (once for cleaning, once for reversing).
+- Space Complexity: `O(n)`, due to the extra memory required for the `clean_str`.
