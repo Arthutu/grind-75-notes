@@ -293,3 +293,144 @@ def isPalindrome(self, s: str) -> bool:
 
 - Time Complexity: `O(2*n)`, as the string is iterated twice (once for cleaning, once for reversing).
 - Space Complexity: `O(n)`, due to the extra memory required for the `clean_str`.
+
+## Invert Binary Tree
+[LeetCode Question](https://leetcode.com/problems/invert-binary-tree/description/)
+
+#### Solutions:
+1. **Depth-first Search (DFS)**: Recursively traverse the tree and swap the left and right subtrees.
+2. **Breadth-first Search (BFS)**: 
+
+#### [Good To Know 📚] Trees
+[Tree](https://en.wikipedia.org/wiki/Tree_(abstract_data_type)) is a type of graph data structure composed of nodes and edges. Its main properties are:
+
+1. Acyclic, meaning it does not contain any cycles.
+2. There exists a path from the root to any node.
+3. Has `N - 1` edges, where `N` is the number of nodes in the tree.
+4. Each node has exactly one parent node, except the root node.
+
+![image](https://github.com/user-attachments/assets/267dfaf4-a1f5-4eb5-8535-8cc775016284)
+
+####  Terminology of a tree
+
+1. Root: The topmost node in the tree.
+2. Internal node: Every node of a tree that has child nodes.
+3. Leaf: Every node in a tree that has no child nodes.
+4. Subtree: A smaller tree formed from a node and its descendants.
+5. Ancestor: All the nodes that are between the path from the root to the current node are the ancestors of the current node.
+6. Descendent: All the nodes that are reachable from the current node when moving down the tree are descendants of the current node.
+7. Level: The number of edges along the unique path between it and the root node. This is the same as depth.
+8. Breadth: The number of leaves.
+9. Size of a tree: Number of nodes in the tree.
+10. Distance: The number of edges along the shortest path between two nodes.
+11. Width: The number of nodes in a level.
+
+#### Binary Tree
+
+[Binary tree](https://en.wikipedia.org/wiki/Binary_tree) is a type of tree in which each node has at most two children, in other words, every node in a binary tree has 0 to 2 children.
+
+![image](https://github.com/user-attachments/assets/5859c324-a904-4628-99f8-d9cb9e2d281e).
+
+There are three types of binary trees:
+
+1. Full Binary Tree: Every node has 0 or 2 children.
+
+![image](https://github.com/user-attachments/assets/226e0d4f-38a3-40fc-abb0-db3d0cb0ce24)
+
+2. Complete Binary Tree: All levels are filled except possibly the last, which is filled from left to right.
+
+![image](https://github.com/user-attachments/assets/c416db85-1f63-42be-ba6a-f001fe4d8ca2)
+
+3. Perfect Binary Tree: All internal nodes have two children, and all leaf nodes are at the same level.
+
+#### Binary Search Tree
+
+A [Binary Search Tree (BST)](https://en.wikipedia.org/wiki/Binary_search_tree) is a rooted binary tree with the value of each internal node being greater than all the values in the respective node's left subtree and lest than the ones in its right subtree. In other words, all left descendants < node < all right descendats.
+
+![image](https://github.com/user-attachments/assets/60f5c41f-6568-4555-bade-616f6e29e291)
+
+**Search**
+
+The main purpose of a BTS is to search efficiently. To search for an item, look at the value of the top node and see if its greater, smaller or equal to the item being looked for. If it is equal, then item is found. If it is smaller, look at the left subtree. If it is larger, look at the right subtree. The time complexity of each search is `O(n)` for the worst case and `O(log(n))` for the avarege case, where `n` is the height of the tree.
+
+
+**Insertion**
+
+Unlike a sorted list, inserting an item to the BST does not require each item in the list to move down an index. Instead, when inserting an item, first perform the searching for that item in that BST. However, if we find an empty tree, instead we replace that empty tree with a new node containing the inserted value in the BST. The time complexity is `O(n)` for the worst case and `O(log(n))` for the avarege case, where `n` is the height of the tree.
+
+**Deletion**
+
+Deleting an element from the tree is the same as finding an element in the tree. After you find the node, if the node's right subtree is empty, bring its left subtree to its current position and remove the node. Otherwise, delete the leftmost node of the right subtree and put it in its current position. The time complexity is `O(n)` for the worst case and `O(log(n))` for the avarege case, where `n` is the height of the tree.
+
+#### Balanced Binary Tree
+
+A [balanced binary tree](https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree) is a binary tree in which, for every node in the tree, the difference in height (depth) of its left and right subtrees is at most 1.
+
+#### Tree Traversal
+
+[Tree Traversal](https://en.wikipedia.org/wiki/Tree_traversal) refers to the process of visiting each node in the tree, exactly once.
+
+**In-order Traversal**
+
+In-order traversal vists the left branch subtree, then the current node, and finally the right subtree.
+
+**Pre-order Traversal**
+
+In-order traversal vists the current node first, then the left subtree, and finally the right subtree.
+
+**Post-order Traversal**
+
+In-order traversal vists the left subtree first, then the right subtree, and finally the current node.
+
+#### Depth First Search
+
+[Depth-first search (DFS)](https://en.wikipedia.org/wiki/Depth-first_search) is an algorithm for traversing or searching tree or graph data structures. The algorithm starts at the root node and explores as far as possible along each branch before [backtracking](https://en.wikipedia.org/wiki/Backtracking). In terms of tree traverasl it is a pre-order traversal. Extra memory, usually a stack, is needed to keep track of the nodes discovered so far along a specified branch which helps in backtracking of the graph.
+
+DFS is better at finding nodes far away from the root.
+
+#### Breadth First Search
+
+[Breadth First Search](https://en.wikipedia.org/wiki/Breadth-first_search) is an algorithm for searching a tree data structure for a node that satisfies a given property. It starts at the tree root and explores all nodes at the present depth prior to moving on to the nodes at the next depth level. Extra memory, usually a queue, is needed to keep track of the child nodes that were encountered but not yet explored.
+
+BFS is better for finding nodes close/closest to the root.
+
+#### DFS Solution
+
+To invert a binary tree, we need to swtich the left and right nodes. Thinking in DFS, we first need to decide the return value, which in this case is the inverted version of the current subtree. Second, we need to identify the states. In this problem, there is no additional state that need to be carried other than the current tree that we are inverting.
+
+The recursion ends at a leaft node. From thereafter, the left and right subtrees are swaped based on the recursion call stack.
+
+```python
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if root is None:
+            return None
+
+        root.left, root.right = self.invertTree(root.right), self.invertTree(root.left)
+
+        return root
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where n is the number of nodes in the tree, since every node is visited once.
+- Space Complexity: `O(h)`, where h is the height of the tree. This represents the maximum depth of the recursion stack. In the worst case (skewed tree), `h = n`.
+
+#### BFS Solution
+
+To invert a binary tree, we need to swtich the left and right nodes. Thinking in BFS, we create a queue and the curret node to it. Then, while the queue is not empty, we pop an item from the queue, swap its left and right values, and add its child to the queue.
+
+
+```python
+def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        q = collections.deque([root])
+        while q:            
+            if cur:= q.popleft():
+                cur.right, cur.left = cur.left, cur.right
+                q.extend([cur.left, cur.right])
+        return root
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where n is the number of nodes in the tree, since every node is visited once.
+- Space Complexity: `O(n)`, where n is the number of nodes in the queue.
