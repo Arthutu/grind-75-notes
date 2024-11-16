@@ -66,6 +66,8 @@ def twoSum(self, nums: List[int], target: int) -> List[int]:
 #### Solutions:
 1. **Stack:** Use a stack to track opening brackets and ensure they are closed in the correct order.
 
+--- 
+
 #### [Good To Know 📚] Stack
 [Stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)) is a data structure following the `first in, last out` (FILO) principle. It supports three main operations:
 
@@ -82,6 +84,8 @@ A stack can be implemented using either an array or a linked list.
 - **Array Implementation**: A variable _top_ keeps track of the size (length) of the stack, pointing to the next available slot in the array. The push operation adds an element and increments _top_ (checking for overflow), while the pop operation decrements _top_ (checking for underflow) and returns the removed item. A dynamic array allows the stack to grow or shrink as needed, making it an efficient stack implementation with amortized `O(1)` time complexity for push and pop operations. [Visualize array-based stack](https://www.cs.usfca.edu/~galles/visualization/StackArray.html).
 
 - **Linked List Implementation**: The stack is represented by the head of the linked list, where pushing and popping occur. This implementation doesn't face overflow (unless memory is exhausted). [Visualize linked list-based stack](https://www.cs.usfca.edu/~galles/visualization/StackLL.html).
+
+---
 
 #### Stack Solution
 
@@ -118,6 +122,8 @@ def isValid(self, s: str) -> bool:
 #### Solutions:
 1. **Two Pointer:** Traverse both lists simultaneously, always selecting the next smallest element to add to the merged linked list.
 
+---
+
 #### [Good To Know 📚] Linked List
 [Linked list](https://en.wikipedia.org/wiki/Linked_list) is a linear collection of elements where each element points to the next. It is a data structure consisting of a collection of nodes that represent a sequence.
 
@@ -150,6 +156,8 @@ Variations of linked lists:
 2. **Insert or delete at beginning**: `O(1)`
 3. **Insert or delete at end**: `O(1)` if the end is known; otherwise `O(n)`
 4. **Insert or delete in the middle**: `O(n)`
+
+---
 
 #### Two Pointers Solution
 
@@ -301,6 +309,8 @@ def isPalindrome(self, s: str) -> bool:
 1. **Depth-first Search (DFS)**: Recursively traverse the tree and swap the left and right subtrees.
 2. **Breadth-first Search (BFS)**: 
 
+---
+
 #### [Good To Know 📚] Trees
 [Tree](https://en.wikipedia.org/wiki/Tree_(abstract_data_type)) is a type of graph data structure composed of nodes and edges. Its main properties are:
 
@@ -394,6 +404,8 @@ DFS is better at finding nodes far away from the root.
 
 BFS is better for finding nodes close/closest to the root.
 
+---
+
 #### DFS Solution
 
 To invert a binary tree, we need to swtich the left and right nodes. Thinking in DFS, we first need to decide the return value, which in this case is the inverted version of the current subtree. Second, we need to identify the states. In this problem, there is no additional state that need to be carried other than the current tree that we are inverting.
@@ -442,9 +454,13 @@ def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
 1. **Depth First Search (DFS)**: Recursively traverse the tree until a parent node were its children are split, e.g, one in the right and the other in the left subtree, is found.
 2. **Iterative Approach**: Iteratively update the root to the next node until a node were its children are split, e.g, one in the right and the other in the left subtree, is found.
 
+---
+
 #### [Good To Know 📚] Lowest common ancestor
 
 The [lowest common ancestor](https://en.wikipedia.org/wiki/Lowest_common_ancestor) is defined between two nodes `p` and `q` as the lowest node in `T` that has both `p` and `q` as descendants (where we allow a node to be a descendant of itself).
+
+---
 
 #### DFS Solution
 
@@ -485,3 +501,48 @@ def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -
 
 - Time Complexity: `O(h)`, where `h` is the height of the tree. In the best case (balanced tree), `h = log n`. In the worst case (skewed tree), `h = n`.
 - Space Complexity: `O(1)`, since no additional memory is used beyond the traversal.
+
+## Balanced Binary Tree
+[LeetCode Question](https://leetcode.com/problems/balanced-binary-tree/description/)
+
+#### Solutions:
+1. **Depth First Search (DFS)**: Recursively traverse the tree and check the height of both left and right subtrees for each node, verifying if the condition (height difference is no more than one), is met.
+
+
+#### DFS Solution
+
+This solution uses a helper function to recursively determine whether a subtree is balanced and calculate its height. The key logic is:
+
+1. If the current node is `None`, return a height of `0` (base case).
+2. Recursively calculate the height of the left and right subtrees.
+3. If either subtree is unbalanced (indicated by a height of `-1`), propagate `-1` upward.
+4. If the absolute difference between the heights of the left and right subtrees exceeds `1`, mark the current subtree as unbalanced by returning `-1`.
+5. Otherwise, return the height of the current subtree as `max(left_height, right_height) + 1`
+
+The tree is balanced if the helper function does not return `-1`.
+
+```python
+def isBalanced(self, root: Optional[TreeNode]) -> bool:
+        def helper(node):
+            if node is None:
+                return 0
+            
+            right_height = helper(node.right)
+            left_height = helper(node.left)
+
+            if right_height == -1 or left_height == -1:
+                return -1
+
+            if abs(right_height - left_height) > 1:
+                return -1
+            
+            return max(right_height, left_height) + 1
+
+
+        return helper(root) != -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the Tree.
+- Space Complexity: `O(h)`, where h is the height of the tree. This represents the maximum depth of the recursion stack.
