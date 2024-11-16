@@ -434,3 +434,54 @@ def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
 
 - Time Complexity: `O(n)`, where n is the number of nodes in the tree, since every node is visited once.
 - Space Complexity: `O(n)`, where n is the number of nodes in the queue.
+
+## Lowest Common Ancestor of a Binary Search Tree
+[LeetCode Question](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/description/)
+
+#### Solutions:
+1. **Depth First Search (DFS)**: Recursively traverse the tree until a parent node were its children are split, e.g, one in the right and the other in the left subtree, is found.
+2. **Iterative Approach**: Iteratively update the root to the next node until a node were its children are split, e.g, one in the right and the other in the left subtree, is found.
+
+#### [Good To Know 📚] Lowest common ancestor
+
+The [lowest common ancestor](https://en.wikipedia.org/wiki/Lowest_common_ancestor) is defined between two nodes `p` and `q` as the lowest node in `T` that has both `p` and `q` as descendants (where we allow a node to be a descendant of itself).
+
+#### DFS Solution
+
+To find the LCA in a BST, consider three scenarios:
+1. **Both nodes are in the left subtree**: If both `p` and `q` are smaller than the current node's value, continue the search in the left subtree.
+2. **Both nodes are in the right subtree**: If both `p` and `q` are greater than the current node's value, continue the search in the right subtree.
+3. **Nodes are split across subtrees (or one equals the current node)**: The current node is the LCA.
+
+```python
+def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if p.val < root.val and q.val < root.val:
+            return self.lowestCommonAncestor(root.left, p, q)
+        elif p.val > root.val and q.val > root.val:
+            return self.lowestCommonAncestor(root.right, p, q)
+        else:
+            return root
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(h)`, where `h` is the height of the tree. In the best case (balanced tree), `h = log n`. In the worst case (skewed tree), `h = n`.
+- Space Complexity: `O(h)`, where h is the height of the tree. This represents the maximum depth of the recursion stack.
+
+#### Iterative Solution
+
+```python
+def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        while root:
+            if p.val < root.val and q.val < root.val:
+                root = root.left
+            elif p.val > root.val and q.val > root.val:
+                root = root.right
+            else:
+                return root
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(h)`, where `h` is the height of the tree. In the best case (balanced tree), `h = log n`. In the worst case (skewed tree), `h = n`.
+- Space Complexity: `O(1)`, since no additional memory is used beyond the traversal.
