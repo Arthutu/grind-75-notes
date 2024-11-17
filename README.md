@@ -363,7 +363,6 @@ A [Binary Search Tree (BST)](https://en.wikipedia.org/wiki/Binary_search_tree) i
 
 The main purpose of a BTS is to search efficiently. To search for an item, look at the value of the top node and see if its greater, smaller or equal to the item being looked for. If it is equal, then item is found. If it is smaller, look at the left subtree. If it is larger, look at the right subtree. The time complexity of each search is `O(n)` for the worst case and `O(log(n))` for the avarege case, where `n` is the height of the tree.
 
-
 **Insertion**
 
 Unlike a sorted list, inserting an item to the BST does not require each item in the list to move down an index. Instead, when inserting an item, first perform the searching for that item in that BST. However, if we find an empty tree, instead we replace that empty tree with a new node containing the inserted value in the BST. The time complexity is `O(n)` for the worst case and `O(log(n))` for the avarege case, where `n` is the height of the tree.
@@ -585,3 +584,43 @@ def hasCycle(self, head: Optional[ListNode]) -> bool:
 
 - Time Complexity: `O(n)`, where n is the number of nodes in the linked list. Each node is visited at most twice (once by the slow pointer and once by the fast pointer).
 - Space Complexity: `O(1)`, since only two pointers are used for the traversal.
+
+## First Bad Version
+[LeetCode Question](https://leetcode.com/problems/first-bad-version/description/)
+
+#### Solutions:
+
+1. **Binary Search**: Efficiently narrows down the search space by halving it at each step to find the first bad version.
+
+#### Binary Search
+
+Since the input array is ordered from "good" to "bad," and the first bad version causes all subsequent versions to also be bad, binary search is an effective solution:
+
+1. Initialize two pointers: `left` starting at the first version, and `right` starting at the last version.  
+2. While the search space is not narrowed down to a single version:  
+   - Calculate the midpoint: `mid = (left + right) // 2`.  
+   - Check if `mid` is a bad version using the provided `isBadVersion()` API:  
+     - If `mid` is bad, the first bad version must be to the left or could be `mid` itself, so move the `right` pointer to `mid`.  
+     - If `mid` is not bad, move the `left` pointer to `mid + 1`.  
+3. When `left` equals `right`, the first bad version is found.
+
+
+```python
+def firstBadVersion(self, n: int) -> int:
+        left, right = 0, n 
+
+        while left < right:
+            mid = (left + right) // 2
+
+            if isBadVersion(mid):
+                right = mid
+            else:
+                left = mid + 1
+
+        return right
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(log n)`, since the search space is halved in each iteration, resulting in logarithmic complexity.
+- Space Complexity: `O(1)`, since only two pointers, `lef`t and `right`, and the `mid` variable are used which require constant space.
