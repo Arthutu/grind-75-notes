@@ -723,3 +723,40 @@ def canConstruct(self, ransomNote: str, magazine: str) -> bool:
 
 - Time Complexity: `O(n + m)`, where `n` is the lengh of `magazine` and `m` is the length of `ransomNote`.
 - Space Complexity: `O(k)`, where `k` is the number of unique characters in `magazine`.
+
+## Climbing Stairs
+[LeetCode Question](https://leetcode.com/problems/climbing-stairs/description/)
+
+#### Solutions:
+
+1. **Dynamic Programming**: Solves the problem by identifying a recurrence relation that represents the number of ways to climb the stairs, optimized to use constant space.
+
+#### Dynamic Programming
+
+This problem is a classic application of dynamic programming. To climb a staircase with `n` steps, one can either take a single step from step `(n-1)` or take two steps from step `(n-2)`. Thus, the total ways to reach step `n` is the sum of the ways to reach step `(n-1)` and `(n-2)`. For example, to reach the first step, there is only one way: climb 1 step. However, to reach the second step, there are two ways: climb the first step and then take another step or climb 2 steps directly. Therefore, we can generalize the recurrence relation as:  
+
+$\text{ways}(n) = \text{ways}(n - 1) + \text{ways}(n - 2)$
+
+**Steps:**
+
+1. Initialize two variables:  
+   - `prev_step` (ways to reach step `0`) = `0`.  
+   - `curr_step` (ways to reach step `1`) = `1`.  
+2. For each step up to `n`, update `prev_step` and `curr_step` to represent the ways to reach the current step using the recurrence relation.  
+3. Return `curr_step`, which represents the total ways to reach the `n`-th step.  
+
+
+```python
+def climbStairs(self, n: int) -> int:
+        prev_step, curr_step = 0, 1
+      
+        for _ in range(n):
+            prev_step, curr_step = curr_step, prev_step + curr_step
+      
+        return curr_step
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of steps.
+- Space Complexity: `O(1)`, as both variables `prev_step` and `curr_step` do not grow with the input size.
