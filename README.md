@@ -546,3 +546,42 @@ def isBalanced(self, root: Optional[TreeNode]) -> bool:
 
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the Tree.
 - Space Complexity: `O(h)`, where h is the height of the tree. This represents the maximum depth of the recursion stack.
+
+## Linked List Cycle
+[LeetCode Question](https://leetcode.com/problems/linked-list-cycle/)
+
+#### Solutions:
+
+1. **Floyd's Cycle Finding Algorithm (Tortoise and Hare Algorithm)**: Utilizes two pointers: a slow pointer (`tortoise`) and a fast pointer (`hare`), moving through the list at different speeds. If there is a cycle, the two pointers will eventually meet inside it.
+
+#### Floyd's Cycle Finding Algorithm
+
+Floyd's cycle-finding algorithm employs two pointers that traverse the sequence at different speeds. It is commonly called the "tortoise and hare algorithm," referencing Aesop's fable *The Tortoise and the Hare*.
+
+![image](https://github.com/user-attachments/assets/6cd3cdad-9be4-4618-b305-4484a8bbaff3)
+
+To solve the problem:
+
+1. The faster pointer (`hare`) moves at twice the speed of the slow pointer (`tortoise`). 
+2. If there is a cycle in the linked list, the tortoise and the hare will meet at some point within the cycle.  
+3. If no cycle exists, the hare will reach the end of the list (`null`).
+
+
+```python
+def hasCycle(self, head: Optional[ListNode]) -> bool:
+        slow = fast = head
+
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+
+            if slow == fast:
+                return True
+        
+        return False
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where n is the number of nodes in the linked list. Each node is visited at most twice (once by the slow pointer and once by the fast pointer).
+- Space Complexity: `O(1)`, since only two pointers are used for the traversal.
