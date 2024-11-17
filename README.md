@@ -10,6 +10,56 @@ This document contains concise notes for each question from [Grind 75](https://w
 1. **Brute Force:** Iterate through all pairs until the target sum is found.
 2. **Hash Table:** Use a hash table to store values as you iterate, achieving an efficient single-loop solution.
 
+---
+#### [Good To Know 📚] Hash Table (Hash Map)
+
+#### Hash Function
+
+Before diving into hash tables, we first need to understand [hash functions](https://en.wikipedia.org/wiki/Hash_function). A hash function converts data of arbitrary size to a fixed-size value, such as a 32-bit integer. These values, called _hash values_, _hash codes_, _hash digests_, _digests_, or simply _hashes_ are critical in data structures like hash tables.
+
+For instance, a simple hash function for an integer array could sum its elements and return the sum modulo 100:  
+- Hashing `[5, 23, 84]` yields `(5 + 23 + 84) % 100 = 12`.  
+- Hashing `[31, 22, 45, 61, 10]` yields `(31 + 22 + 45 + 61 + 10) % 100 = 69`.
+
+A valid hash function must always return the same hash value for two items representing the same values. For example, the hash function mentioned in the previous paragraph always returns the same value for arrays of identical size and contents, regardless of other attributes such as memory address, etc. However, the converse is not necessarily true. Two items with the same hash values are not necessarily equal. For example, `[32, 10]` has the same hash value as `[18, 10, 14]`, even though they are not equal. Such cases of two different items hashing to the same value is known as a hash collision.
+
+![image](https://github.com/user-attachments/assets/ce23ad85-210b-480c-a6d4-23e5ba561e6b)
+
+Key attributes of a good hash function:  
+1. Easy to compute the hash value (the function has low time complexity).  
+2. Minimizes collisions.  
+3. Distributes hash values evenly.  
+
+A good hash function satisfying the above criteria can help improve the efficiency of hash tables.
+
+#### Hash Table (Hash Map)
+
+A [Hash Table](https://en.wikipedia.org/wiki/Hash_table) is a data structure that implements an associative array, also called a dictionary or simply map; an associative array is an abstract data type that maps keys to values. A hash table uses a hash function to compute an index, also called a hash code, into an array of _buckets_ or _slots_, from which the desired value can be found. During lookup, the key is hashed and the resulting hash indicates where the corresponding value is stored. A map implemented by a hash table is called a hash map.
+
+![image](https://github.com/user-attachments/assets/772e7354-a947-4a18-a32e-df3016ac5284)
+
+As the possibility of keys increases, [hash collision (where two different items have the same hash value)](https://en.wikipedia.org/wiki/Hash_collision) is unavoidable by the [pigeonhole principle](https://en.wikipedia.org/wiki/Pigeonhole_principle). To handle the collisions, two of the most common strategies are [open addressing](https://en.wikipedia.org/wiki/Open_addressing) and [separate chaining](https://en.wikipedia.org/wiki/Hash_table#Separate_chaining).
+
+#### Open Addressing
+
+Open addressing is a collision resolution technique in which every entry record is stored in the bucket array itself, and the hash resolution is performed through probing. When a new entry has to be inserted, the buckets are examined, starting with the hashed-to slot and proceeding in some probe sequence, until an unoccupied slot is found. When searching for an entry, the buckets are scanned in the same sequence, until either the target record is found, or an unused array slot is found, which indicates an unsuccessful search.
+
+![image](https://github.com/user-attachments/assets/424a9a85-0e0b-4247-86f9-b4aa400d72a0)
+
+#### Separate Chaining
+
+In separate chaining, the process involves building a linked list with key–value pair for each search array index. The collided items are chained together through a single linked list, which can be traversed to access the item with a unique search key. Collision resolution through chaining with linked list is a common method of implementation of hash tables, although other lists that can dynamically increase in the size will do as well.
+
+![image](https://github.com/user-attachments/assets/d842fb6d-2153-4448-b0a2-64ebe24528a6)
+
+#### Time Complexities
+
+1. **Search**: `O(1)` in average, `O(n)` in the worst case.
+2. **Insert**: `O(1)` in average, `O(n)` in the worst case.
+3. **Delete**: `O(1)` in average, `O(n)` in the worst case.
+4. **Space**: `O(n)` in average, `O(n)` in the worst case.
+---
+
 #### Brute Force Solution
 
 Uses two loops to check each pair of elements until target is found.
@@ -624,3 +674,52 @@ def firstBadVersion(self, n: int) -> int:
 
 - Time Complexity: `O(log n)`, since the search space is halved in each iteration, resulting in logarithmic complexity.
 - Space Complexity: `O(1)`, since only two pointers, `lef`t and `right`, and the `mid` variable are used which require constant space.
+
+## Ransom Note
+[LeetCode Question](https://leetcode.com/problems/ransom-note/description/)
+
+#### Solutions:
+
+1. **Hash Table**: Counts the letters in `magazine` and stores them in a hash table. Then, checks if the letters are sufficient to construct the `ransomNote`.
+
+#### Hash Table
+
+The solution counts the occurrences of each character in `magazine` using a hash table. It then iterates through each character in `ransomNote`, decrementing the count in the hash table. If a required character is missing, the function returns `False`. If the loop completes, the `ransomNote` can be constructed.  
+
+```python
+def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        available_letters = {}
+
+        for char in magazine:
+            available_letters[char] = available_letters.get(char, 0) + 1
+        
+        for char in ransomNote:
+            if available_letters.get(char, 0) > 0:
+                available_letters[char] -= 1
+            else:
+                return False
+        
+        return True
+```
+
+Note that in Python, the [Counter](https://docs.python.org/3/library/collections.html#collections.Counter) collection could be used to count maganize's characters instead:
+
+```python
+from collections import Counter
+
+def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        available_letters = Counter(magazine)
+        
+        for char in ransomNote:
+            if available_letters.get(char, 0) > 0:
+                available_letters[char] -= 1
+            else:
+                return False
+        
+        return True
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n + m)`, where `n` is the lengh of `magazine` and `m` is the length of `ransomNote`.
+- Space Complexity: `O(k)`, where `k` is the number of unique characters in `magazine`.
