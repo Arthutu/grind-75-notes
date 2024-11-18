@@ -760,3 +760,46 @@ def climbStairs(self, n: int) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the number of steps.
 - Space Complexity: `O(1)`, as both variables `prev_step` and `curr_step` do not grow with the input size.
+
+## Longest Palindrome
+[LeetCode Question](https://leetcode.com/problems/longest-palindrome/description/)
+
+#### Solutions:
+
+1. **Greedy Algorithm**: Counts character occurrences and determines the longest possible palindrome length by leveraging the symmetry properties of palindromes. 
+
+#### Greedy Algorithm
+
+A [palindrome](https://en.wikipedia.org/wiki/Palindrome) is symmetrical around its center. This means that every character in the palindrome must appear an even number of times, except for one character (at most), which can serve as the center of the palindrome when its length is odd.  
+
+**Steps:**
+
+1. Use a `Counter` to count the occurrences of each character in the string.  
+2. Iterate over the counts of each character:  
+   - Add all even counts directly to the palindrome length.  
+   - For odd counts, add the largest even part (`count - 1`) and, if the palindrome has no center yet, add 1 to accommodate the odd character in the center.  
+3. Return the calculated palindrome length.  
+
+```python
+from collections import Counter
+
+def longestPalindrome(self, s: str) -> int:
+        count = Counter(s)
+        longest_palindrome = 0
+
+        for v in count.values():
+            longest_palindrome += v - (v % 2)
+            
+            if longest_palindrome % 2 == 0 and v % 2 == 1:
+                longest_palindrome += 1
+        
+        return longest_palindrome
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n + k)`
+  - `O(n)` for counting characters in the string using `Counter`.
+  - `O(k)` to iterate over the counts, where `k` is the number of distinct characters in the string.
+- Space Complexity: `O(n)`, since the `Counter` dictionary stores up to `k` keys, where `k` is the number of distinct characters in `s`.
+
