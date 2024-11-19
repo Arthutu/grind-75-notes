@@ -878,3 +878,40 @@ def reverseList(self, head: ListNode) -> ListNode:
 
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the list.
 - Space Complexity: `O(1)`, as no extra space is used apart from a few pointers.
+
+## Majority Element
+[LeetCode Question](https://leetcode.com/problems/majority-element/description/)
+
+#### Solutions:
+
+1. **Moore Voting Algorithm**
+
+#### Moore Voting Algorithm
+
+The [Moore Voting Algorithm](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm) efficiently finds the majority element in a list, assuming that the majority element exists. The algorithm works by maintaining a `candidate` for the majority element and a `count` to track its dominance:  
+
+- If `count` is `0`, update the candidate to the current number and set `count` to `1`.  
+- If the current number equals the candidate, increment `count`.  
+- Otherwise, decrement `count`.  
+
+```python
+def majorityElement(self, nums: List[int]) -> int:
+        count = 0
+        candidate = None
+
+        for num in nums:
+            if count == 0:
+                candidate = num
+                count += 1
+            elif num == candidate:
+                count += 1
+            else:
+                count -= 1
+        
+        return candidate
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the length of the `nums` array.
+- Space Complexity: `O(1)`, as only two variables (`count` and `candidate`) are used.
