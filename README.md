@@ -955,3 +955,56 @@ def addBinary(self, a: str, b: str) -> str:
 
 - Time Complexity: `O(n)`, where `n` is the length of the longer binary string (`a` or `b`).
 - Space Complexity: `O(n)`, due to the storage required for the `ans` list that contains the result.
+
+## Diameter of Binary Tree
+[LeetCode Question](https://leetcode.com/problems/diameter-of-binary-tree/description/)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS):** Transverse the tree, calculting the depth (or height) of each subtree, finding the max (global) diameter.
+
+#### Depth-First Search (DFS)
+
+The Diameter of a Binary Tree is defined as the length of the longest path between any two nodes in the tree, where the path may or may not pass through the root. Using DFS, we can calculate this efficiently.  
+
+**Key Idea**:  
+
+- For each node, the diameter passing through it is the sum of the depths of its left and right subtrees.
+- The global diameter is the maximum diameter across all nodes.  
+- During DFS, calculate and return the depth of the current subtree, while updating a global variable `max_diameter` to store the maximum diameter encountered.  
+
+**Algorithm Steps**:  
+
+1. Traverse the tree using DFS.  
+2. For each node:  
+   - Recursively calculate the depth of its left and right subtrees.  
+   - Compute the diameter through this node as `left_depth + right_depth`.  
+   - Update the global `max_diameter` if this is the largest diameter seen so far.  
+3. Return the depth of the current subtree to the parent node as `1 + max(left_depth, right_depth)`.  
+
+
+```python
+def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        def dfs(node):
+            if node is None:
+                return 0
+            
+            nonlocal max_diameter
+
+            left_depth = dfs(node.left)
+            right_depth = dfs(node.right)
+
+            max_diamater = max(max_diameter, left_depth + right_depth)
+
+            return 1 + max(left_depth, right_depth)
+
+        max_diameter = 0
+        dfs(root)
+
+        return max_diameter
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the binary tree.
+- Space Complexity: `O(h)`, where `h` is the height of the binary tree.
