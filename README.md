@@ -803,3 +803,78 @@ def longestPalindrome(self, s: str) -> int:
   - `O(k)` to iterate over the counts, where `k` is the number of distinct characters in the string.
 - Space Complexity: `O(n)`, since the `Counter` dictionary stores up to `k` keys, where `k` is the number of distinct characters in `s`.
 
+## Reverse Linked List
+[LeetCode Question](https://leetcode.com/problems/reverse-linked-list/description/)
+
+#### Solutions:
+
+1. **Recursion**: Uses a call stack to reverse the nodes by adjusting the pointers during the unwinding phase of the recursion.  
+2. **Iterative**: Iterates through the list while rearranging the pointers to reverse the list in place.  
+
+#### Recursion
+
+This approach uses the recursive stack to reverse the linked list. The base case occurs when the list is empty (`head is None`) or has a single node (`head.next is None`). During the recursive backtracking, the links are reversed:
+
+- `head.next.next = head` reverses the link to point back to the current node.  
+- `head.next = None` disconnects the original forward link, preventing cycles.  
+
+#### Example Walkthrough
+
+
+- Input: `1 -> 2 -> 3 -> None`
+- Call Stack:  
+  1. `reverseList(1)` → Calls `reverseList(2)`.  
+  2. `reverseList(2)` → Calls `reverseList(3)`.  
+  3. `reverseList(3)` → Base case reached, returns `3`.  
+- Backtracking:  
+  1. Reverses `2 -> 3` to `3 -> 2`, disconnecting `2 -> 3`.  
+  2. Reverses `1 -> 2` to `2 -> 1`, disconnecting `1 -> 2`.
+- Output: `3 -> 2 -> 1 -> None`. 
+
+```python
+def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if head is None or head.next is None:
+            return head
+        
+        res = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the list. Each node is visited once.
+- Space Complexity: `O(n)`, due to the recursive call stack.
+
+#### Iterative
+
+This solution iteratively adjusts the next pointers of the nodes to reverse the list. A `dummy_node` helps track the head of the reversed list.
+
+**Steps:**
+1. Traverse the original list while maintaining a reference to the next node.
+2. Redirect the next pointer of the current node to the reversed portion.
+3. Update the head of the reversed list to the current node.
+4. Proceed to the next node in the original list.
+
+```python
+def reverseList(self, head: ListNode) -> ListNode:
+        dummy_node = ListNode()      
+        current_node = head
+      
+        while current_node is not None:
+            next_node = current_node.next
+          
+            current_node.next = dummy_node.next
+            dummy_node.next = current_node
+          
+            current_node = next_node
+      
+        return dummy_node.next
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the list.
+- Space Complexity: `O(1)`, as no extra space is used apart from a few pointers.
