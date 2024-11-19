@@ -915,3 +915,43 @@ def majorityElement(self, nums: List[int]) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the length of the `nums` array.
 - Space Complexity: `O(1)`, as only two variables (`count` and `candidate`) are used.
+
+## Add Binary
+[LeetCode Question](https://leetcode.com/problems/add-binary/description/)
+
+#### Solutions:
+
+1. **Two Pointers:** Use two pointers to loop through the binary numbers and sum them.
+
+#### Two Pointers
+
+This solution mimics the manual addition of binary numbers by starting from the least significant bit (rightmost) and working toward the most significant bit (leftmost), while handling a carry. The key idea is to sum corresponding bits of the two binary strings `a` and `b` along with a carry, adjusting for differing lengths of the strings.
+
+**Algorithm Steps**:  
+
+1. Use two pointers `i` and `j` to iterate from the end of `a` and `b` toward the beginning.
+2. At each step, calculate the sum of the current bits and the carry.
+3. Compute the binary digit for the current position using modulo operation (`% 2`) and determine the carry for the next step using integer division (`// 2`). Note that [divmod](https://docs.python.org/3/library/functions.html#divmod) is used since it returns a tuple containing the quotient and the remainder. 
+4. Append the calculated digit to the result list.
+5. After finishing both strings, append any remaining carry.
+6. Reverse the result list and join it to form the final binary string.
+
+```python
+def addBinary(self, a: str, b: str) -> str:
+        ans = []  
+        i, j, carry = len(a) - 1, len(b) - 1, 0
+
+        while i >= 0 or j >= 0 or carry:
+            carry += (0 if i < 0 else int(a[i])) + (0 if j < 0 else int(b[j]))
+
+            carry, v = divmod(carry, 2)
+            ans.append(str(v))
+            i, j = i - 1, j - 1
+      
+        return "".join(ans[::-1])
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the length of the longer binary string (`a` or `b`).
+- Space Complexity: `O(n)`, due to the storage required for the `ans` list that contains the result.
