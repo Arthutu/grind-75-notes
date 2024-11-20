@@ -496,6 +496,81 @@ def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
 - Time Complexity: `O(n)`, where n is the number of nodes in the tree, since every node is visited once.
 - Space Complexity: `O(n)`, where n is the number of nodes in the queue.
 
+## Valid Anagram
+[LeetCode Question](https://leetcode.com/problems/valid-anagram/description/)
+
+#### Solutions:
+
+1. **Characters Frequency**: Count the frequency of each character in both strings and compare.
+
+#### Characters Frequency
+
+An [anagram](https://en.wikipedia.org/wiki/Anagram) is a rearrangement of letters from one word to form another, using all original letters exactly once. To verify whether two strings are anagrams:  
+
+1. **Lengths**: If the strings differ in length, they cannot be anagrams.  
+2. **Frequency Count**: Iterate through both strings, incrementing and decrementing the count for each character in an array of size 26 (to represent lowercase English letters).  
+3. **Validation**: If all counts in the array are `0` after processing, the strings are anagrams.
+
+```python
+def isAnagram(self, s: str, t: str) -> bool:
+        if len(s) != len(t):
+            return False
+
+        freq = [0] * 26
+        for i in range(len(s)):
+            freq[ord(s[i]) - ord("a")] += 1
+            freq[ord(t[i]) - ord("a")] -= 1
+
+        return all(f == 0 for f in freq)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the length of `s`.
+- Space Complexity: `O(C)`, where `C` is equal to 26, all lowercase English letters.
+
+## Binary Search
+[LeetCode Question](https://leetcode.com/problems/binary-search/)
+
+#### Solutions:
+
+1. **Two Pointers**: Utilize two pointers, `left` and `right`, to represent the search bounds within the array. Repeatedly narrow the search interval by comparing the middle value with the target.
+
+#### Two Pointers
+
+To achieve the `O(log n)` runtime requirement, a [binary search algorithm](#good-to-know--trees) is employed. The array is divided in half during each iteration:
+
+1. Compute the midpoint of the current range using `(left + right) // 2`.  
+2. Compare the value at `nums[mid]` to the target:  
+   - If they are equal, return the `mid` index.  
+   - If the target is smaller, adjust the search range to the left by updating `right = mid - 1`.  
+   - If the target is larger, adjust the search range to the right by updating `left = mid + 1`.  
+3. Repeat until the search range is empty (`left > right`).  
+
+If the target is not found, return `-1`.  
+
+```python
+def search(self, nums: List[int], target: int) -> int:
+        left, right = 0, len(nums) - 1
+
+        while left < right:
+            mid = (left + right) // 2
+
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] > target:
+                right = mid - 1
+            else:
+                left = mid + 1
+
+        return -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(log n)`, where `n` is the length of `nums`.
+- Space Complexity: `O(1)`, since the `left`, `right`, and `mid` variables use a constant amount of extra space.
+
 ## Flood Fill
 [LeetCode Question](https://leetcode.com/problems/flood-fill/description/)
 
