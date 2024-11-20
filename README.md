@@ -1036,32 +1036,65 @@ def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the linked list.
 - Space Complexity: `O(1)`, since the two additional pointers occupy a constant space.
 
-## Maximum Depth of Binary Tree
-[LeetCode Question](https://leetcode.com/problems/maximum-depth-of-binary-tree/description/)
+## Contains Duplicate
+[LeetCode Question](https://leetcode.com/problems/contains-duplicate/description/)
 
 #### Solutions:
 
-1. **Depth-First Search (DFS):** Tranverse the tree aggregating the depth of the left and right subtrees.
+1. **Counting:** Use a `Counter` to count occurrences of each element and check if any value exceeds 1.  
+2. **Set:** Compare the length of the `set` created from the array with the original array length.  
+3. **Hash Map:** Use a hash map (or set) to track seen elements during a single loop.  
 
-#### Depth-First Search (DFS)
+#### Counting
 
-A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node. This can be computed recursively using Depth-First Search (DFS). For every node, we calculate the depth of its left and right subtrees and return the larger value plus 1 (to include the current node).
+This approach utilizes the `Counter` class from Python's `collections` module to count the frequency of each element in the array. If any element has a count greater than 1, the array contains duplicates.
 
 ```python
-def maxDepth(self, root: Optional[TreeNode]) -> int:
-        def dfs(node):
-            if node is None:
-                return 0
-            
-            left_depth = dfs(node.left)
-            right_depth = dfs(node.right)
+from collections import Counter
 
-            return 1 + max(left_depth, right_depth)
+def containsDuplicate(self, nums: List[int]) -> bool:
+        count = Counter(nums)
         
-        return dfs(root)
+        return any([v > 1 for v in count.values()])
 ```
 
 **Complexity Analysis**
 
-- Time Complexity: `O(n)`, where `n` is the number of nodes in the tree.
-- Space Complexity: `O(h)`, where `h` is the height of the tree.
+- Time Complexity: `O(n)`, where `n` is the number of elements in the array. The counting and checking operations both take linear time.
+- Space Complexity: `O(h)`, for the `Counter` object storing element frequencies. `n` is the number of elements in the array.
+
+#### Set
+
+By converting the array to a [set](https://docs.python.org/3/library/stdtypes.html#set), duplicates are removed. Comparing the length of the set to the array tells us if duplicates exist.
+
+```python
+def containsDuplicate(self, nums: List[int]) -> bool:
+    return len(set(nums)) < len(nums)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of elements in the array. Converting the array to a set and comparing lengths both take linear time.
+- Space Complexity: `O(h)`, where `n` is the length of the array. Space is allocated for the `set` parse operation.
+
+#### Hash Map
+
+This method iterates through the array and uses a hash map (or set) to store seen elements. If an element is already present, we return True.
+
+```python
+def containsDuplicate(self, nums: List[int]) -> bool:
+        count_map = set()
+
+        for n in nums:
+            if n in count_map:
+                return True
+
+            count_map.add(n)
+        
+        return False
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of elements in the array, as each element is processed once.
+- Space Complexity: `O(h)`, for the hash map (set) tracking unique elements. `n` is the number of elements in the array.
