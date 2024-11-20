@@ -1035,3 +1035,33 @@ def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
 
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the linked list.
 - Space Complexity: `O(1)`, since the two additional pointers occupy a constant space.
+
+## Maximum Depth of Binary Tree
+[LeetCode Question](https://leetcode.com/problems/maximum-depth-of-binary-tree/description/)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS):** Tranverse the tree aggregating the depth of the left and right subtrees.
+
+#### Depth-First Search (DFS)
+
+A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node. This can be computed recursively using Depth-First Search (DFS). For every node, we calculate the depth of its left and right subtrees and return the larger value plus 1 (to include the current node).
+
+```python
+def maxDepth(self, root: Optional[TreeNode]) -> int:
+        def dfs(node):
+            if node is None:
+                return 0
+            
+            left_depth = dfs(node.left)
+            right_depth = dfs(node.right)
+
+            return 1 + max(left_depth, right_depth)
+        
+        return dfs(root)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the tree.
+- Space Complexity: `O(h)`, where `h` is the height of the tree.
