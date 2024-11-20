@@ -1207,6 +1207,44 @@ def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the linked list.
 - Space Complexity: `O(1)`, since the two additional pointers occupy a constant space.
 
+## Maximum Depth of Binary Tree
+[LeetCode Question](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS)**: A recursive approach to calculate the depth of the tree by traversing its left and right subtrees.  
+
+#### Depth-First Search (DFS)
+
+The **maximum depth** of a binary tree is the number of nodes along the longest path from the root node to a leaf node. To solve this problem, we can use a recursive **depth-first search (DFS)** strategy:
+
+1. **Base Case**: If the current node is `None` (i.e., a null reference), return 0.  
+2. **Recursive Case**:  
+   - Recursively calculate the depth of the left subtree.  
+   - Recursively calculate the depth of the right subtree.  
+   - The maximum depth from the current node is `1 + max(left_depth, right_depth)`, where `1` accounts for the current node itself.  
+
+This algorithm effectively explores all paths in the binary tree, ensuring the depth of each subtree is calculated. Once all recursive calls are resolved, the final result represents the maximum depth of the entire tree. 
+
+```python
+def maxDepth(self, root: Optional[TreeNode]) -> int:
+        def dfs(node):
+            if node is None:
+                return 0
+            
+            left_depth = dfs(node.left)
+            right_depth = dfs(node.right)
+
+            return 1 + max(left_depth, right_depth)
+        
+        return dfs(root)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the tree.
+- Space Complexity: `O(h)`, where `h` is the height of the tree. In the worst case (skewed tree), this could be `O(n)`; for a balanced tree, it is `O(log n)`.
+
 ## Contains Duplicate
 [LeetCode Question](https://leetcode.com/problems/contains-duplicate/description/)
 
