@@ -357,7 +357,7 @@ def isPalindrome(self, s: str) -> bool:
 
 #### Solutions:
 1. **Depth-first Search (DFS)**: Recursively traverse the tree and swap the left and right subtrees.
-2. **Breadth-first Search (BFS)**: 
+2. **Breadth-first Search (BFS)**: Iteratively tranverse the tree and swap the left and right nodes.
 
 ---
 
@@ -495,6 +495,102 @@ def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
 
 - Time Complexity: `O(n)`, where n is the number of nodes in the tree, since every node is visited once.
 - Space Complexity: `O(n)`, where n is the number of nodes in the queue.
+
+## Flood Fill
+[LeetCode Question](https://leetcode.com/problems/flood-fill/description/)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS):** Recursively visit adjacent cells to change their color.  
+2. **Breadth-First Search (BFS):** Iteratively visit adjacent cells to change their color using a queue.  
+
+#### Depth-First Search (DFS) 
+
+This approach uses recursion to explore and update all connected pixels that share the same color as the starting pixel. The process continues until all valid pixels are updated.
+
+**Steps:**
+
+1. From the starting pixel, update its color to color.
+2. Look at adjacent pixels. For each adjacent pixel:
+   - If the pixel is within bounds, and
+   - If the pixel's color is the same as the starting pixel's original color, and the pixel isn't already the new color (to prevent infinite recursion),              then recursively apply the flood fill to that pixel.
+
+```python
+def floodFill(
+        self, image: List[List[int]], sr: int, sc: int, color: int
+    ) -> List[List[int]]:
+        def dfs(row, col):
+            if (
+                not 0 <= row < img_height
+                or not 0 <= col < img_width
+                or image[row][col] != original_color
+                or image[row][col] == color
+            ):
+                return
+
+            image[row][col] = color
+            for delta_row, delta_column in zip(directions[:-1], directions[1:]):
+                dfs(row + delta_row, col + delta_column)
+
+        directions = [-1, 0, 1, 0, -1]
+        img_height, img_width = len(image), len(image[0])
+        original_color = image[sr][sc]
+
+        dfs(sr, sc)
+
+        return image
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(M * N)`, where `M` is the number of rows and `N` is the number of columns in the image.
+- Space Complexity: `O(M * N)`, for the recursive stack in the worst case (entire grid is one connected component).
+
+#### Breadth-first Search (BFS)
+
+The BFS solution uses a queue to iteratively process connected pixels. It ensures that all adjacent pixels are visited in layers, starting from the initial pixel.
+
+```python
+from collections import deque
+
+def flood_fill(r: int, c: int, replacement: int, image: List[List[int]]) -> List[List[int]]:
+    num_rows, num_cols = len(image), len(image[0])
+    def get_neighbors(coord, color):
+        row, col = coord
+        delta_row = [-1, 0, 1, 0]
+        delta_col = [0, 1, 0, -1]
+        for i in range(len(delta_row)):
+            neighbor_row = row + delta_row[i]
+            neighbor_col = col + delta_col[i]
+            if 0 <= neighbor_row < num_rows and 0 <= neighbor_col < num_cols:
+                if image[neighbor_row][neighbor_col] == color:
+                    yield neighbor_row, neighbor_col
+
+    def bfs(root):
+        queue = deque([root])
+        visited = [[False for c in range(num_cols)] for r in range(num_rows)]
+        r, c = root
+        color = image[r][c]
+        image[r][c] = replacement
+        visited[r][c] = True
+        while len(queue) > 0:
+            node = queue.popleft()
+            for neighbor in get_neighbors(node, color):
+                r, c = neighbor
+                if visited[r][c]:
+                    continue
+                image[r][c] = replacement
+                queue.append(neighbor)
+                visited[r][c] = True
+
+    bfs((r, c))
+    return image
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(M * N)`, where `M` is the number of rows and `N` is the number of columns in the image.
+- Space Complexity: `O(V + E)`, where `V` is the number of vertices and `E` is the number of edges in the graph.
 
 ## Lowest Common Ancestor of a Binary Search Tree
 [LeetCode Question](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/description/)
