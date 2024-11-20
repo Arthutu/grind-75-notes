@@ -1008,3 +1008,30 @@ def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the binary tree.
 - Space Complexity: `O(h)`, where `h` is the height of the binary tree.
+
+## Middle of the Linked List
+[LeetCode Question](https://leetcode.com/problems/middle-of-the-linked-list/description/)
+
+#### Solutions:
+
+1. **Two Pointers:** Utilizes the tortoise and hare algorithm to find the middle of the linked list.
+
+#### Two Pointers
+
+This approach utilizes the [tortoise and hare" algorithm](#linked-list-cycle), where two pointers, `slow` and `fast`, traverse the list at different speeds. The `slow` pointer moves one step at a time, while the `fast` pointer moves two steps. When the `fast` pointer reaches the end of the list (or becomes `None`), the `slow` pointer will be positioned at the middle node.  
+
+```python
+def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow, fast = head, head
+
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        
+        return slow
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the linked list.
+- Space Complexity: `O(1)`, since the two additional pointers occupy a constant space.
