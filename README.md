@@ -1307,3 +1307,42 @@ def containsDuplicate(self, nums: List[int]) -> bool:
 
 - Time Complexity: `O(n)`, where `n` is the number of elements in the array, as each element is processed once.
 - Space Complexity: `O(h)`, for the hash map (set) tracking unique elements. `n` is the number of elements in the array.
+
+## Maximum Subarray
+[LeetCode Question](https://leetcode.com/problems/maximum-subarray/description/)
+
+#### Solutions:
+
+1. **Kadane's Algorithm**: An efficient way to find the largest sum of a contiguous subarray by maintaining a running sum and dynamically determining the maximum sum at each step.  
+
+#### Kanade's Algorithm
+
+While iterating through the array, calculate the running sum (`current_sum`) of the subarray ending at each index. If `current_sum` is negative, reset it to the current number, effectively "starting fresh." Maintain a `max_sum` variable to store the maximum subarray sum found so far.  
+
+#### Steps  
+
+1. Initialize `max_sum` to the first element of the array (since the array is guaranteed to have at least one element).  
+2. Initialize `current_sum` to the first element as well.  
+3. Iterate through the array starting from the second element:  
+   - Update `current_sum` to be the larger of the current element or `current_sum + current element`.  
+   - Update `max_sum` to be the larger of `max_sum` or `current_sum`.  
+4. Return `max_sum` after the loop.  
+
+This ensures that every possible subarray is considered, with efficient handling of negative contributions to the running sum.  
+
+```python
+def maxSubArray(self, nums: List[int]) -> int:
+        max_sum = current_sum = nums[0]
+
+        for num in nums[1:]:
+            current_sum = max(current_sum + num, num)
+
+            max_sum = max(max_sum, current_sum)
+
+        return max_sum
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of elements in the input array.
+- Space Complexity: `O(1)`, since only constant extra space is used to store max_sum and current_sum.
