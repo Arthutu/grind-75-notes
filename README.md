@@ -1346,3 +1346,137 @@ def maxSubArray(self, nums: List[int]) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the number of elements in the input array.
 - Space Complexity: `O(1)`, since only constant extra space is used to store max_sum and current_sum.
+
+## Insert Interval
+[LeetCode Question](https://leetcode.com/problems/insert-interval/description/)
+
+#### Solutions:
+
+1. **Sort & Merge**: Add the new interval to the input array, sort it and then merge overlapping intervals.
+2. **Linear Pass**: Add all intervals smaller than the new interval to the result, merge any overlapping interval, and add all intervals greater then the new interval to the result.
+
+--- 
+
+#### [Good To Know 📚] Intervals
+
+Questions related to intervals are quite common and they come down to detect or merge overlapping intervals. Nonetheless, the key to these types of problems is to find the overlap of two intervals.
+
+#### Detecting Overlap
+
+Intervals do not overlap when the end time of te first inverval is earlier (smaller) than the start time of the second interval.
+
+```
+x1  x2
+|---|
+
+        |---|
+        y1  y2
+
+y1  y2
+|---|
+
+        |---|
+        x1  x2
+```
+
+In the example above, `x2 < y1 or y2 < x1`. Therefore, the overlapping condition is the oposite: `not (x2 < y1 or y2 < x1)`.
+
+#### Finding the Overlap Interval
+
+If two intervals, `[x1, x2]` and `[y1, y2]`, overlap, then the overlapping interval can be calculated by `[max(x1, y1), min(x2, y2)]`. 
+
+#### Merging Intervals
+
+To merge overlapping intervals, we first sort them by their start time and then iterate through the sorted list, updating the end time of the last merged interval if an overlap exists.
+
+```python
+def merge_intervals(intervals: List[List[int]]) -> List[List[int]]:
+    # Sort intervals by their start time
+    intervals.sort()
+
+    def overlap(a: List[int], b: List[int]) -> bool:
+        return not (b[1] < a[0] or a[1] < b[0])
+
+    res: List[List[int]] = []
+    for interval in intervals:
+        if not res or not overlap(res[-1], interval):
+            res.append(interval)
+        else:
+            # Merge intervals by getting the bigger end value since the start value is already the smallest b/c intervals are sorted
+            res[-1][1] = max(res[-1][1], interval[1])
+
+    return res
+```
+
+Time Complexity: O(n*log(n)), due to sorting.
+Space Complexity: O(n), since memory is allocated for the `res` array.
+
+---
+
+#### Sort & Merge
+
+This solution appends the new interval to the end of the input array list, sort the input array again and apply the merge algorithm describe above.
+
+```python
+def insert(
+        self, intervals: List[List[int]], newInterval: List[int]
+    ) -> List[List[int]]:
+        intervals.append(newInterval)
+
+        intervals.sort()
+
+        def overlap(a, b):
+            return not (b[1] < a[0] or a[1] < b[0])
+        
+        res: List[List[int]] = []
+
+        for interval in intervals:
+            if not res or not overlap(res[-1], interval):
+                res.append(interval)
+            else:
+                res[-1][1] = max(res[-1][1], interval[1])
+        
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(nlog(n)`, due to sorting.
+- Space Complexity: `O(n)`, for the result list.
+
+#### Lienr Pass
+
+1. Add the intervals whose end time is before the start_time of the enw interval. In other words, we add all the non-overlapping earlier intervals to the response.
+2. For those intervals that overlap with the new interval, expand the new interval's start and end times.
+3. Add the new interval to the final result
+4. For intervals whose start time is after the end of the new interval, add them directly to the final results.
+
+```python
+def insert(
+        self, intervals: List[List[int]], new_interval: List[int]
+    ) -> List[List[int]]:
+        res: List[List[int]] = []
+        i = 0
+        n = len(intervals)
+        while i < n and intervals[i][1] < new_interval[0]:
+            res.append(intervals[i])
+            i += 1
+
+        while i < n and intervals[i][0] <= new_interval[1]:
+            new_interval[0] = min(new_interval[0], intervals[i][0])
+            new_interval[1] = max(new_interval[1], intervals[i][1])
+            i += 1
+
+        res.append(new_interval)
+
+        while i < n:
+            res.append(intervals[i])
+            i += 1
+
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the length of the intervals input.
+- Space Complexity: `O(n)`, for the result list.
