@@ -1444,7 +1444,7 @@ def insert(
 - Time Complexity: `O(nlog(n)`, due to sorting.
 - Space Complexity: `O(n)`, for the result list.
 
-#### Lienr Pass
+#### Linear Pass
 
 1. Add the intervals whose end time is before the start_time of the enw interval. In other words, we add all the non-overlapping earlier intervals to the response.
 2. For those intervals that overlap with the new interval, expand the new interval's start and end times.
@@ -1480,3 +1480,58 @@ def insert(
 
 - Time Complexity: `O(n)`, where `n` is the length of the intervals input.
 - Space Complexity: `O(n)`, for the result list.
+
+## 01 Matrix
+[LeetCode Question](https://leetcode.com/problems/01-matrix/description/)
+
+#### Solutions:
+
+1. **Breadth-First Search (BFS)**: Efficiently calculates the distance of each cell to the nearest `0` using a queue.
+
+#### Breadth-First Search (DFS)
+
+The problem can be solved using BFS to calculate the shortest distance to a `0` for each cell in the matrix. BFS is well-suited for such problems since it explores neighbors layer by layer.
+
+#### Steps:
+1. **Initialize Distances**: Create a `distances` matrix of the same size as the input, initializing all cells to `-1`. Set the cells with `0` in the input matrix to `0` in the `distances` matrix.
+2. **Queue Setup**: Enqueue all cells that contain `0` since their distance to the nearest `0` is already known.
+3. **BFS Traversal**:
+   - Dequeue a cell and check its four neighbors (up, right, down, left).
+   - If a neighbor hasn’t been visited (distance is `-1`), update its distance as `current cell distance + 1` and enqueue it.
+4. **Repeat**: Continue until the queue is empty.
+5. **Return Result**: The `distances` matrix will now contain the shortest distance to the nearest `0` for each cell.
+
+```python
+from collections import deque
+
+def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        rows, cols = len(mat), len(mat[0])
+        distances = [[-1] * cols for _ in range(rows)]
+        queue = deque()
+
+        for i in range(rows):
+            for j in range(cols):
+                if mat[i][j] == 0:
+                    distances[i][j] = 0
+                    queue.append((i, j))
+        
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+        while queue:
+            i, j = queue.popleft()
+
+            for delta_row, delta_col in directions:
+                neighbour_i = i + delta_row
+                neighbour_j = j + delta_col
+
+                if  0 <= neighbour_i < rows and 0 <= neighbour_j < cols and distances[neighbour_i][neighbour_j] == -1:
+                    distances[neighbour_i][neighbour_j] = distances[i][j] + 1
+                    queue.append((neighbour_i, neighbour_j))
+        
+        return distances
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(m * n)`, where m is the number of rows, and n is the number of columns in the matrix.
+- Space Complexity: `O(m * n)`, for the `distances` matrix and the BFS queue.
