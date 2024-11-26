@@ -1535,3 +1535,162 @@ def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
 
 - Time Complexity: `O(m * n)`, where m is the number of rows, and n is the number of columns in the matrix.
 - Space Complexity: `O(m * n)`, for the `distances` matrix and the BFS queue.
+
+## K Closest Points to Origin
+[LeetCode Question](https://leetcode.com/problems/k-closest-points-to-origin/description/)
+
+#### Solutions
+
+1. **Heap**: Use a priority queue to efficiently find the K closest points to the origin.
+
+---
+#### [Good To Know 📚] Priority Queue and Heap
+
+[Priority Queue](https://en.wikipedia.org/wiki/Priority_queue) is an abstract data type, and [Heap](https://en.wikipedia.org/wiki/Heap_(data_structure)) is the concrete data structure we use to implement a priority queue.
+
+#### Priority Queue
+
+A priority queue organizes elements based on their priority, rather than their order of arrival. Elements with high priority are served before elements with low priority. In some implementations, if two elements have the same priority, they are served in the same order in which they were enqueued. In other implementations, the order of elements with the same priority is undefined. Operations include:
+
+1. `is_empty`: Check whether the queue has no elements.
+2. `insert_with_priority`: Insert an element with a priority.
+3. `pull_highest_priority_element`: Remove and return the highest-priority element.
+
+A priority queue can be implemented by:
+
+1. Unsorted Array: Insert is `O(1)` but pulling the highest priority element is `O(n)` as all elements would have to be searched.
+2. Sorted Array: Insert is `O(n)` as we would have to loop through to find the correct position, and pulling the highest priority element is `O(1)`.
+3. Heap: `O(log(n))` for insert and for pulling the highest priority element.
+
+#### Heap
+
+A heap is a specialized tree-based data structure implementing priority queues. Usually, a binary tree is used (binary heap), but the tree might not always be binary. In particular, k-ary heap (A.K.A. k-heap) is a tree where the nodes have k children. As long the heap properties are satified, it is a heap:
+
+1. Almost complete, i.e. every level is filled except possibly the last (deepest) level. The filled items in the last level are left-justified.
+2. For any node,
+   - its key (priority) is greater than its parent's key (Min Heap).
+   - its key (priority) is smaller than its parent's key (Max Heap).
+
+![Example of a binary max-heap with node keys being integers between 1 and 100](https://github.com/user-attachments/assets/1bae9dd6-52be-46a2-ae07-789c11cc6dc2)
+
+#### Heap Operations
+
+**Insert**
+
+To insert a key into a heap, place the new key at the first free leaf. If property #2 is violated, perform a bubble-up:
+
+```python
+def bubble_up(node):
+    while node.parent and node.parent.key > node.key:
+        # swap node and node.parent
+        node = node.parent
+```
+
+As the name of the algorithm suggests, it "bubbles up" the new node by swapping it with its parent until the order is correct. Since the height of a heap is `O(log(n))`, the complexity of bubble-up is `O(log(n))`.
+
+**Pull Highest Priority Element**
+
+What this operation does is:
+
+1. Delete a node with min key and return it
+2. Reorganize the heap so the two properties still hold
+
+To do that, we:
+
+1. Remove and return the root since the node with the minimum key is always at the root
+2. Replace the root with the last node (the rightmost node at the bottom) of the heap
+3. If property #2 is violated, perform a bubble-down
+
+```python
+def bubble_down(node):
+    while node is not a leaf:
+        smallest_child = child of node with smallest key
+        if smallest_child < node:
+            swap node and smallest_child
+            node = smallest_child
+        else:
+            break
+```
+
+What this says is we keep swapping between the current node and its smallest child until we get to the leaf, hence a "bubble down". Again the time complexity is `O(log(N))` since the height of a heap is `O(log(N))`.
+
+#### Implementation
+
+Being a complete tree makes an array a natural choice to implement a heap since it can be stored compactly and no space is wasted. Pointers are not needed. The parent and children of each node can be calculated with index arithmetic.
+
+For node `i`, its children are stored at `2i+1` and 2i+2, and its parent is at `floor((i-1)/2)`. So instead of `node.left` we'd do `2*i+1`. (Note that if we are implementing a k-ary heap, then the childrens are at `ki+1` to `ki+k`, and its parent is at `floor((i-1)/k)`.)
+
+This is exactly how the [python language implements heaps](https://github.com/python/cpython/blob/d3a8d616faf3364b22fde18dce8c168de9368146/Lib/heapq.py#L263).
+
+**Heap in Python**
+
+Python comes with a built-in `heapq` we can use, and it is a **min heap**, i.e. element at top is smallest.
+
+`heapq.heappush` takes two arguments, the first is the heap (an array/list) we want to push the element into, and the second argument can be anything as long as it can be used for comparison. Typically, we push a tuple since Python tuples are compared position by position. For example, `(1, 10)` is smaller than `(2, 0)` because the first element in `(1, 0)` is smaller than the first element in `(2, 0)`. `(1, 10)` is smaller than `(1, 20)` because when the first elements are equal, we compare the next one. In this case, 10 is smaller than 20.
+
+`heapq.heappop` takes a single argument heap, and pop and return the smallest element in the heap.
+
+```python
+import heapq
+>>> h = []
+>>> heapq.heappush(h, (5, 'write code'))
+>>> heapq.heappush(h, (7, 'release product'))
+>>> heapq.heappush(h, (1, 'write spec'))
+>>> heapq.heappush(h, (3, 'create tests'))
+>>> heapq.heappop(h)
+(1, 'write spec')
+>>> h[0]
+>>> (3, 'create tests')
+```
+
+The simplest way to implement a max heap is to reverse the sign of the number before we push it into the heap and reverse it again when we pop it out.
+
+```python
+import heapq
+>>> h = []
+>>> heapq.heappush(h, -1 * 10)
+>>> heapq.heappush(h, -1 * 30)
+>>> heapq.heappush(h, -1 * 20)
+>>> print(-1 * heapq.heappop(h))
+30
+>>> print(-1 * h[0])
+20
+```
+
+If the list is known beforehand, we can create a heap out of it by simply using `heapify`, which is actually an `O(N)` operation.
+
+```python
+import heapq
+arr = [3, 1, 2]
+heapq.heapify(arr)
+```
+---
+
+#### Heap
+
+This solution builds a min heap where the key (priority) is the distance to the origin. The distance to the origin can be found using the Euclidean distance provided in the problem description: `√(x1 - x2)2 + (y1 - y2)2`. After the heap is built, we need to pop the top `k` elements off the heap, which will be the `k` closest points to the origin.
+
+```python
+from heapq import heappop, heappush
+
+def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+        heap: List[Tuple[int, List[int]]] = []
+
+        for point in points:
+            heappush(heap, (point[0] ** 2 + point[1] ** 2, point))
+
+        res: List[List[int]] = []
+
+        for _ in range(k):
+            priority, value = heappop(heap)
+            res.append(value)
+
+        return res
+```
+
+Note that the distance we stored was not the Euclidean distance. Instead, we did not take the square root because it is more accurate when the stored value is an integer.
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * log(n))`, where `n` is the number of points. Insertion into the heap is `O(log(n))`, done `n` times.
+- Space Complexity: `O(n)`, for the heap.
