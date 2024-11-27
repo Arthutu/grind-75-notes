@@ -1694,3 +1694,99 @@ Note that the distance we stored was not the Euclidean distance. Instead, we did
 
 - Time Complexity: `O(n * log(n))`, where `n` is the number of points. Insertion into the heap is `O(log(n))`, done `n` times.
 - Space Complexity: `O(n)`, for the heap.
+
+## Longest Substring Without Repeating Characters
+[LeetCode Question](https://leetcode.com/problems/longest-substring-without-repeating-characters/description/)
+
+#### Solutions
+
+1. **Brute Force:** Check every single substring and count the ones with non-repeating characters.
+2. **Sliding Window:** Use a flexible window to track the longest substring while ensuring characters remain unique.
+
+---
+#### [Good To Know 📚] Sliding Window
+
+Sliding Window Technique is a method used to efficiently solve problems that involve defining a window or range in the input data (arrays or strings) and then moving that window across the data to perform some operation within the window. This technique is commonly used in algorithms like finding subarrays with a specific sum, finding the longest substring with unique characters, or solving problems that require a fixed-size window to process elements efficiently.
+
+#### Fixed Size Sliding Window
+
+For problems involving a fixed size, slide a window of size `k` across the input, adjusting computations as the window moves.
+
+```python
+def sliding_window_fixed(input, window_size):
+    ans = window = input[0:window_size]
+    for right in range(window_size, len(input)):
+        left = right - window_size
+        remove input[left] from window
+        append input[right] to window
+        ans = optimal(ans, window)
+    return ans
+```
+
+#### Variable Sliding Window
+
+For problems like this one, dynamically adjust the window size based on validity conditions. Increase the right pointer to expand the window and, if invalid, adjust the left pointer to shrink it.
+   
+```python
+def sliding_window_flexible_longest(input):
+    initialize window, ans
+    left = 0
+    for right in range(len(input)):
+        append input[right] to window
+        while invalid(window):        # update left until window is valid again
+            remove input[left] from window
+            left += 1
+        ans = max(ans, window)        # window is guaranteed to be valid here
+    return ans
+```
+---
+
+#### Brute Force
+
+Iterate through all possible substrings and check for unique characters. If a substring is valid, update the longest substring length.
+
+```python
+def lengthOfLongestSubstring(self, s: str) -> int:
+        n = len(s)
+        longest = 0
+
+        for start in range(n):
+            for end in range(n):
+                sub = s[start : end + 1]
+                if len(set(sub)) == len(sub):
+                    longest = max(longest, end + 1 - start)
+
+        return longest
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n^2)`, where `n` is the length of the string `s`.
+- Space Complexity: `O(n)`, due to the set used to track unique characters in each substring.
+
+
+#### Sliding Window
+
+Using a hashmap, track the index of each character’s last occurrence. Adjust the left pointer directly to skip duplicate regions efficiently.
+
+```python
+def lengthOfLongestSubstring(self, s: str) -> int:
+        char_map = {}
+        left = 0
+        longest = 0
+
+        for right, char in enumerate(s):
+            if char in char_map and char_map[char] >= left:
+                left = char_map[char] + 1
+
+            char_map[char] = right
+            longest = max(longest, right - left + 1)
+
+        return longest
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, as each character is processed once.
+- Space Complexity: `O(k)`, where `k` is the size of the character set (limited by the number of unique characters in `s`).
+
