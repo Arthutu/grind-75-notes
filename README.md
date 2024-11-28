@@ -1867,3 +1867,62 @@ def threeSum(self, nums: List[int]) -> List[List[int]]:
 - Space Complexity: `O(log(n))`.
   - Sorting uses `O(log(n))` space for recursion in standard algorithms like QuickSort.
   - Ignoring output space, no additional space is used.
+
+## Binary Tree Level Order Traversal
+[LeetCode Question](https://leetcode.com/problems/binary-tree-level-order-traversal/)
+
+#### Solutions:
+
+1. **Breadth-First Search (BFS)**: Use BFS strategy to tranverse the tree horizontally, grouping the nodes of the same level.
+
+#### Breadth-First Search (BFS)
+
+To perform a level order traversal, we use the **Breadth-First Search (BFS)** algorithm, which processes nodes level by level. A queue is the ideal data structure for BFS since it ensures nodes are processed in the correct order.
+
+### Steps:
+1. **Base Case:** If the tree is empty `root = None`, return an empty list.
+2. **Initialization:**
+   - Use a `queue` (implemented as a deque) to store nodes at each level, starting with the root node.
+   - Create an empty list `res` to store the level-by-level traversal.
+3. **Processing Levels:**
+   - While the queue is not empty:
+     - Determine the size of the current level `len(queue)`.
+     - Initialize a temporary list `level` to hold node values for the current level.
+     - For each node in the level:
+       - Dequeue a node, add its value to `level`.
+       - Enqueue the node's left and right children if they exist.
+     - Append the `level` list to `res`.
+4. **Return Results:** After processing all levels, return the `res` list.
+
+
+```python
+from collections import deque
+
+def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        res = []
+
+        if not root:
+            return res
+
+        queue = deque([root])
+
+        while queue:
+            level = []
+
+            for _ in range(len(queue)):
+                node = queue.popleft()
+                level.append(node.val)
+
+                for child in [node.left, node.right]:
+                    if child is not None:
+                        queue.append(child)
+
+            res.append(level)
+
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the total number of nodes in the tree.
+- Space Complexity: `O(w)`, where `w` is the maximum width of the tree, i.e., the largest number of nodes at any level.
