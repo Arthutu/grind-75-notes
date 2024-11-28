@@ -1790,3 +1790,80 @@ def lengthOfLongestSubstring(self, s: str) -> int:
 - Time Complexity: `O(n)`, as each character is processed once.
 - Space Complexity: `O(k)`, where `k` is the size of the character set (limited by the number of unique characters in `s`).
 
+## 3Sum
+[LeetCode Question](https://leetcode.com/problems/3sum/description/)
+
+#### Solutions:
+
+1. **Two Pointers**: Sort the input array, and for each number, use two pointers to go through the array searching for the triples.
+
+#### Two Pointers
+
+#### Steps:
+1. **Sort the Array:** Sorting ensures the array is in non-decreasing order, which simplifies duplicate handling and allows for efficient two-pointer traversal.
+2. **Iterate with a Loop:**
+   - Select the first number of the triplet `nums[i]`
+   - Skip duplicates to ensure unique triplets.
+   - Stop early if `nums[i] > 0` since the sorted array guarantees subsequent sums will be positive.
+3. **Use Two Pointers:**
+   - Place one pointer at the next element `left = i + 1` and the other at the end of the array `right = n - 1`
+   - Compute the sum `current_sum = nums[i] + nums[left] + nums[right]`.
+   - Adjust pointers based on the sum:
+     - **If `current_sum < 0`:** Increment `left` to increase the sum.
+     - **If `current_sum > 0`:** Decrement `right` to decrease the sum.
+     - **If `current_sum = 0`:** Append the triplet and move both pointers, skipping duplicates.
+4. **Repeat:** Continue until `left < right`.
+
+
+```python
+def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+
+        triplets = []
+        n = len(nums)
+
+        for i in range(n - 2):
+            # If current number is bigger than 0, then all following numbers are also greater than 0, since array is sorted.
+            # This means they won't add up to zero.
+            if nums[i] > 0:
+                break
+
+            # Skip Duplicates
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            left = i + 1
+            right = n - 1
+
+            while left < right:
+                current_sum = nums[i] + nums[left] + nums[right]
+
+                if current_sum < 0:
+                    left += 1
+                elif current_sum > 0:
+                    right -= 1
+                else:
+                    triplets.append([nums[i], nums[left], nums[right]])
+
+                    # Move pointers to continue search
+                    left, right = left + 1, right - 1
+
+                    # Skip Duplicates
+                    while left < right and nums[left] == nums[left - 1]:
+                        left += 1
+
+                    # Skip Duplicates
+                    while left < right and nums[right] == nums[right + 1]:
+                        right -= 1
+
+        return triplets
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n^2)`.
+  - Sorting takes `O(n log(n))`
+  - The two pointer loop runs `O(n)` for each iteration of the outer loop, leading to `O(n^2)` overall.
+- Space Complexity: `O(log(n))`.
+  - Sorting uses `O(log(n))` space for recursion in standard algorithms like QuickSort.
+  - Ignoring output space, no additional space is used.
