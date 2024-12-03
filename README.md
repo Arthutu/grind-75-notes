@@ -1983,3 +1983,61 @@ def cloneGraph(self, root: Optional["Node"]) -> Optional["Node"]:
 
 - Time Complexity: `O(n + m)`, where `n` is the number of nodes and `m` is the number of edges. Each node is visited once, and all edges are traversed during neighbor processing.
 - Space Complexity: `O(n)`, where `n` is the number of nodes in the graph.
+
+## Evaluate Reverse Polish Notation
+[LeetCode Question](https://leetcode.com/problems/evaluate-reverse-polish-notation/description/)
+
+#### Solutions:
+
+1. **Stack**: To evaluate a Reverse Polish Notation (RPN) expression, we use a **stack**. Each numeric token is pushed onto the stack, and operators pop operands from the stack to compute the result.
+
+#### Stack
+
+#### Steps:
+
+1. **Initialize Stack**:
+   - Use a list to act as a stack (`number_stack`) for storing numeric values during computation.
+
+2. **Iterate Through Tokens**:
+   - If the token is a number, convert it to an integer and push it onto the stack.
+   - If the token is an operator (`+`, `-`, `*`, `/`), perform the following:
+     - Pop the top two numbers from the stack (`num2` and `num1`).
+     - Apply the operator, treating `num1` as the left operand and `num2` as the right operand.
+     - For division (`/`), ensure the result truncates towards zero using `int(float(num1) / num2)`.
+
+3. **Push Result Back**:
+   - After applying the operator, push the result back onto the stack.
+
+4. **Final Result**:
+   - Once all tokens are processed, the stack will contain a single value, which is the result of the RPN expression.
+
+```python
+def evalRPN(self, tokens: List[str]) -> int:
+    number_stack = []
+    
+    for token in tokens:
+        if token.isdigit() or (len(token) > 1 and token[0] == '-'):
+            # Push number to stack
+            number_stack.append(int(token))
+        else:
+            # Pop two numbers for the operator
+            num2 = number_stack.pop()
+            num1 = number_stack.pop()
+            
+            if token == '+':
+                number_stack.append(num1 + num2)
+            elif token == '-':
+                number_stack.append(num1 - num2)
+            elif token == '*':
+                number_stack.append(num1 * num2)
+            elif token == '/':
+                # Integer division truncating towards zero
+                number_stack.append(int(float(num1) / num2))
+    
+    return number_stack[0]
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of tokens in the input list tokens.
+- Space Complexity: `O(n)`, where `n` is the number of nodes in the graph.
