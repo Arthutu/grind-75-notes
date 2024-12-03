@@ -1879,7 +1879,7 @@ def threeSum(self, nums: List[int]) -> List[List[int]]:
 
 To perform a level order traversal, we use the **Breadth-First Search (BFS)** algorithm, which processes nodes level by level. A queue is the ideal data structure for BFS since it ensures nodes are processed in the correct order.
 
-### Steps:
+#### Steps:
 1. **Base Case:** If the tree is empty `root = None`, return an empty list.
 2. **Initialization:**
    - Use a `queue` (implemented as a deque) to store nodes at each level, starting with the root node.
@@ -1926,3 +1926,60 @@ def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
 
 - Time Complexity: `O(n)`, where `n` is the total number of nodes in the tree.
 - Space Complexity: `O(w)`, where `w` is the maximum width of the tree, i.e., the largest number of nodes at any level.
+
+## Clone Graph
+[LeetCode Question](https://leetcode.com/problems/clone-graph/description/)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS)**: Use DFS strategy to tranverse the tree recursively, cloning the adjacent nodes.
+
+#### Depth-First Search (DFS)
+
+The problem requires cloning a graph such that every node in the original graph has an exact copy in the cloned graph, with the same structure and neighbor relationships. This can be achieved using **Depth-First Search (DFS)**.
+
+#### Steps:
+1. **Initialize Data Structures:**
+   - A dictionary `visited` is used to map each original node to its cloned counterpart. This prevents cycles and redundant cloning in the presence of undirected graphs.
+
+2. **DFS Functionality:**
+   - If the `node` is `None`, return `None` (base case for an empty graph).
+   - If the `node` has already been visited (exists in `visited`), return its clone.
+   - Otherwise, create a new clone of the `node`, store it in `visited`, and recursively clone its neighbors.
+
+3. **Clone Neighbors:**
+   - Iterate through the neighbors of the current `node`.
+   - Use the DFS function to clone each neighbor, appending it to the cloned node's neighbors list.
+
+4. **Return the Result:**
+   - Once all nodes are visited and cloned, the root of the cloned graph is returned.
+
+```python
+from collections import defaultdict
+from typing import Optional
+
+def cloneGraph(self, root: Optional["Node"]) -> Optional["Node"]:
+        visited = defaultdict(Node)
+
+        def dfs(node):
+            if node is None:
+                return None
+
+            if node in visited:
+                return visited[node]
+
+            clone_node = Node(node.val)
+            visited[node] = clone_node
+
+            for neighbor in node.neighbors:
+                clone_node.neighbors.append(dfs(neighbor))
+
+            return clone_node
+
+        return dfs(root)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n + m)`, where `n` is the number of nodes and `m` is the number of edges. Each node is visited once, and all edges are traversed during neighbor processing.
+- Space Complexity: `O(n)`, where `n` is the number of nodes in the graph.
