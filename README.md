@@ -2041,3 +2041,210 @@ def evalRPN(self, tokens: List[str]) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the number of tokens in the input list tokens.
 - Space Complexity: `O(n)`, where `n` is the number of nodes in the graph.
+
+## Course Schedule
+[LeetCode Question](https://leetcode.com/problems/course-schedule/)
+
+#### Solutions:
+
+1. **Topological Sort (DFS):** Utilizes DFS to find conflicting courses
+2. **Topological Sort (Kahn's Algorithm):** Utilizes Kahn's Algorithm to find conflicting courses
+
+---
+#### [Good To Know 📚] Topological Sort
+
+[Topological sort](https://en.wikipedia.org/wiki/Topological_sorting) is the ordering of nodes in a [directed graph](https://en.wikipedia.org/wiki/Directed_graph) such that every node appears before all nodes it points to. This is useful in scenarios like task scheduling. 
+
+- **Key Properties**:
+  - A graph with cycles cannot have a valid topological ordering.
+  - Topological sort is not unique; multiple valid orders can exist.
+
+#### Topological Sort - Kahn's Algorithm
+
+This algorithm is based on **Breadth-First Search (BFS)** and uses the concept of **in-degrees** (the number of incoming edges to a node).
+
+#### **Steps**:
+1. Build a graph and compute in-degrees of all nodes.
+2. Add all nodes with zero in-degrees to a queue.
+3. While the queue is not empty:
+   - Remove a node from the queue, add it to the topological order.
+   - Reduce the in-degree of its neighbors by 1.
+   - Add neighbors with zero in-degrees to the queue.
+4. If all nodes are processed, a valid topological order exists; otherwise, the graph contains a cycle.
+
+#### Implementation
+
+```
+from collections import deque
+
+def find_indegree(graph):
+    indegree = { node: 0 for node in graph }  # dict
+    for node in graph:
+        for neighbor in graph[node]:
+            indegree[neighbor] += 1
+
+    return indegree
+
+
+def topo_sort(graph):
+    res = []
+    q = deque()
+    indegree = find_indegree(graph)
+    for node in indegree:
+        if indegree[node] == 0:
+            q.append(node)
+
+    while len(q) > 0:
+        node = q.popleft()
+        res.append(node)
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                q.append(neighbor)
+
+    return res if len(graph) == len(res) else None
+```
+
+#### Topological Sort - DFS
+
+This approach uses **Depth-First Search (DFS)** to detect cycles and find a valid topological order.
+
+**Steps:**
+1. Represent each node's state as:
+   - **TO_VISIT:** Node has not been visited.
+   - **VISITING:** Node is being visited (part of the current DFS path).
+   - **VISITED:** Node has been fully processed.
+2. Perform DFS for each node:
+   - Mark it as **VISITING**.
+   - Recursively visit all its neighbors.
+   - If a neighbor is already **VISITING**, a cycle is detected.
+   - Otherwise, mark the node as **VISITED** after processing all its neighbors.
+3. If no cycles are detected, the nodes can be ordered topologically.
+
+```python
+from enum import Enum
+from typing import List, Dict
+
+class State(Enum):
+    TO_VISIT = 0
+    VISITING = 1
+    VISITED = 2
+
+def topo_sort_dfs(graph: Dict[str, List[int]]) -> bool:
+    states = [State.TO_VISIT for _ in range(len(graph)]
+
+    def dfs(start):
+        # mark self as visiting
+        states[start] = State.VISITING
+
+        for next_vertex in graph[start]:
+            # ignore visited nodes
+            if states[next_vertex] == State.VISITED:
+                continue
+
+            # revisiting a visiting node, CYCLE!
+            if states[next_vertex] == State.VISITING:
+                return False
+
+            # recursively visit neighbours
+            # if a neighbour found a cycle, we return False right away
+            if not dfs(next_vertex):
+                return False
+
+        # mark self as visited
+        states[start] = State.VISITED
+
+        # if we have gotten this far, our neighbours haven't found any cycle, return True
+        return True
+
+    return dfs(0)
+```
+---
+
+#### Topological Sort (DFS)
+
+```python
+from typing import List
+from enum import Enum
+from collections import defaultdict
+
+class State(Enum):
+    TO_VISIT = 0
+    VISITING = 1
+    VISITED = 2
+
+
+def is_valid_course_schedule(n: int, prerequisites: List[List[int]]) -> bool:
+    def build_graph():
+        graph = defaultdict(list)
+        
+        for src, dest in prerequisites:
+            graph[src].append(dest)
+        
+        return graph
+    
+    def dfs(start, states):
+        states[start] = State.VISITING
+        
+        for next_vertex in graph[start]:
+            if states[next_vertex] == State.VISITED:
+                continue
+                
+            if states[next_vertex] == State.VISITING:
+                return False
+            
+            if not dfs(next_vertex, states):
+                return False
+       
+        states[start] = State.VISITED
+        return True
+        
+    graph = build_graph()
+    states = [State.TO_VISIT for _ in range(n)]
+    
+    for i in range(n):
+        if not dfs(i, states):
+            return False
+    
+    return True
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n + m)`, for traversing nodes and edges during DFS.
+- Space Complexity: `O(n)`, for the graph and recursion stack.
+
+#### Topological Sort (Kahn's Algorithm)
+
+```python
+from collections import defaultdict, deque
+
+def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        graph = defaultdict(list)
+        indegrees = [0] * numCourses
+
+        for course, prereq in prerequisites:
+            graph[prereq].append(course)
+            indegrees[course] += 1
+
+        queue = deque([i for i in range(numCourses) if indegrees[i] == 0])
+
+        completed_count = 0
+
+        while queue:
+            course = queue.popleft()
+            completed_count += 1
+
+            for successor in graph[course]:
+                indegrees[successor] -= 1
+
+                if indegrees[successor] == 0:
+                    queue.append(successor)
+
+        return completed_count == numCourses
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(V + E)`, where `𝑉` is the number of courses (nodes), and `𝐸` is the number of dependencies (edges).
+- Space Complexity: `O(V + E)`, for the graph and queue.
