@@ -2248,3 +2248,97 @@ def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
 
 - Time Complexity: `O(V + E)`, where `𝑉` is the number of courses (nodes), and `𝐸` is the number of dependencies (edges).
 - Space Complexity: `O(V + E)`, for the graph and queue.
+
+## Implement Trie (Prefix Tree)
+[LeetCode Question](https://leetcode.com/problems/implement-trie-prefix-tree/description/)
+
+---
+#### [Good To Know 📚] Trie
+
+A [Trie](https://en.wikipedia.org/wiki/Trie) (pronounced "try") is a tree-like data structure used to store collections of strings. It allows efficient insertions, lookups, and prefix-based searches, making it useful in applications like autocomplete, spellcheckers, and dictionaries.
+
+- **Structure**:
+  - Each node represents a single character.
+  - Words are formed by traversing paths from the root.
+  - An additional flag, `is_end_of_word`, marks the completion of a word.
+
+![image](https://github.com/user-attachments/assets/7d9d6483-c7ff-4301-bb5f-e2c38a58db95)
+
+- **Example**:
+  For words `dog`, `cat`, and `cap`:
+  - The root branches into `d` and `c`.
+  - From `d`, the branch continues to `o` and `g` for "dog."
+  - From `c`, it branches to `a`, then to `t` ("cat") and `p` ("cap").
+---
+
+#### Solution
+
+1. `__init__`:
+   - Initializes the Trie.
+   - `children`: A dictionary to store child nodes (key: character, value: Trie node).
+   - `is_end_of_word`: A boolean indicating if a node marks the end of a word.
+2. `_search_prefix`:
+   - Traverses the Trie for the given `prefix`.
+   - Returns the last node of the prefix if it exists; otherwise, returns `None`.
+   - Use case: Shared by both `search` and s`tartsWith` methods to avoid redundant traversal logic.
+3. `insert`:
+   - Inserts a word into the Trie.
+   - For each character in the word:
+     - Checks if the character exists in `children`. If not, creates a new node.
+     - Moves to the next node.
+   - Marks the final node as the end of a word (`is_end_of_word` = True).
+4. `search`:
+   - Checks if a word exists in the Trie.
+   - Uses `_search_prefix` to find the node for the word.
+   - Verifies that the node exists and marks the end of a word.
+5.`startsWith`:
+   - Checks if any words in the Trie start with the given prefix.
+   - Uses `_search_prefix` to verify the existence of the prefix path.
+
+```python
+class Trie:
+    def __init__(self):
+        self.children = {}
+        self.is_end_of_word = False
+
+    def _search_prefix(self, prefix: str):
+        node = self
+
+        for char in prefix:
+            if node.children.get(char, None) is None:
+                return None
+
+            node = node.children[char]
+
+        return node
+
+    def insert(self, word: str) -> None:
+        node = self
+
+        for char in word:
+            if char not in node.children:
+                node.children[char] = Trie()
+
+            node = node.children[char]
+
+        node.is_end_of_word = True
+
+    def search(self, word: str) -> bool:
+        node = self._search_prefix(word)
+
+        return node is not None and node.is_end_of_word
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self._search_prefix(prefix)
+
+        return node is not None
+```
+
+**Complexity Analysis**
+
+- Time Complexity:
+  - **insert:** `O(n)`. Traverses the Trie, where `n` is the length of the word being inserted.
+  - **search:** `O(n)`. Traverses up to `n` nodes for the word and checks is_end_of_word.
+  - **startsWith:** `O(m)`. Traverses up to `m`, where `m` is the length of the prefix.
+  - **_search_prefix:** `O(p)`, where `p` is the length of the prefix. It is traversed only once for each method call.
+- Space Complexity: `O(c)`, is the number of characters across all words.
