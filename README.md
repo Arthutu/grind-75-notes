@@ -2342,3 +2342,81 @@ class Trie:
   - **startsWith:** `O(m)`. Traverses up to `m`, where `m` is the length of the prefix.
   - **_search_prefix:** `O(p)`, where `p` is the length of the prefix. It is traversed only once for each method call.
 - Space Complexity: `O(c)`, is the number of characters across all words.
+
+## Coin Change
+[LeetCode Question](https://leetcode.com/problems/coin-change/)
+
+#### Solutions
+
+#### DFS + Memoization
+
+```python
+from math import inf
+
+
+class Solution:
+    def minCoins(self, coins, amount, sum, memo):
+        if sum == amount:
+            return 0
+
+        if sum > amount:
+            return inf
+
+        if memo[sum] != -1:
+            return memo[sum]
+
+        ans = inf
+
+        for coin in coins:
+            result = self.minCoins(coins, amount, sum + coin, memo)
+
+            if result == inf:
+                continue
+
+            ans = min(ans, result + 1)
+
+        memo[sum] = ans
+        return ans
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        memo = [-1] * (amount + 1)
+        result = self.minCoins(
+            coins,
+            amount,
+            0,
+            memo
+        )
+        return result if result != inf else -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * amount)`, where `n` is the number of coins, and `amount` is the target value.
+- Space Complexity: `O(amount)`, due to the memoization array and recursive stack.
+
+#### Dynamic Programming
+
+```python
+from math import inf
+
+
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        if amount == 0:
+            return 0
+
+        dp = [inf] * (amount + 1)
+        dp[0] = 0
+
+        for i in range(1, amount + 1):
+            for coin in coins:
+                if i - coin >= 0:
+                    dp[i] = min(dp[i - coin] + 1, dp[i])
+
+        return dp[-1] if dp[-1] < inf else -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * amount)`), where `n` is the number of coins.
+- Space Complexity: `O(amount)`, due to the `dp` array.
