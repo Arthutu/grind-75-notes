@@ -2501,3 +2501,36 @@ class MinStack:
   - `top`:  `O(1)`, as accessing the last element of a list is constant time.
   - `getMin`: `O(1)`, since the minimum is always stored in the last element of the stack.
 - Space Complexity: `O(n)`, where `n` is the number of elements in the stack. Each element stores its value and the minimum at that point, resulting in linear space usage.
+
+## Validate Binary Search Tree
+[LeetCode Question](https://leetcode.com/problems/validate-binary-search-tree)
+
+#### Solution
+
+To validate a Binary Search Tree (BST), we ensure that for every node in the tree:
+1. The value of the node is **greater than** all values in its left subtree.
+2. The value of the node is **less than** all values in its right subtree.
+
+This can be achieved using a Depth-First Search (DFS) approach, where each node is validated against a range of permissible values (`min_val` and `max_val`). These values are updated as we traverse the tree to ensure the BST properties are maintained.
+
+
+```python
+def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        def dfs(root, min_val, max_val):
+            if not root:
+                return True
+
+            if not (min_val < root.val < max_val):
+                return False
+
+            return dfs(root.left, min_val, root.val) and dfs(
+                root.right, root.val, max_val
+            )
+
+        return dfs(root, -inf, inf)
+```
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the number of nodes in the tree. Each node is visited once during the traversal.
+- Space Complexity: `O(h)`, where `h` is the height of the tree. This accounts for the recursive stack space. In the worst case of a skewed tree, `h` could be 
+`O(n)`.
