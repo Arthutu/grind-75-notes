@@ -2534,3 +2534,174 @@ def isValidBST(self, root: Optional[TreeNode]) -> bool:
 - Time Complexity: `O(n)`, where `n` is the number of nodes in the tree. Each node is visited once during the traversal.
 - Space Complexity: `O(h)`, where `h` is the height of the tree. This accounts for the recursive stack space. In the worst case of a skewed tree, `h` could be 
 `O(n)`.
+
+## Number of Islands
+[LeetCode Question](https://leetcode.com/problems/number-of-islands)
+
+#### Solutions:
+
+1. **Depth-First Search (DFS):** Use recursion to traverse and mark all connected land cells.
+2. **Breadth-First Search (BFS):** Use a queue to iteratively process connected land cells. 
+
+---
+#### [Good To Know 📚] Matrix as Graph
+
+Matrices often represent graphs in problems where adjacent cells are connected. Each cell in the matrix can be thought of as a node, and connections between nodes are defined by adjacency (e.g., vertical and horizontal neighbors, or diagonal neighbors if allowed).
+
+$`\begin{bmatrix}0 & 1 & 2\\3 & 4 & 5\\ 6 & 7 & 8 \end{bmatrix}`$ translates to:
+
+```python
+{
+  0: [1, 3],
+  1: [0, 2, 4],
+  2: [1, 5],
+  3: [0, 4, 6],
+  4: [1, 3, 5, 7],
+  5: [2, 4, 8],
+  6: [3, 7],
+  7: [4, 6, 8],
+  8: [5, 7]
+}
+```
+
+When solving a problem, one has to build the graph as they go. Nodes/vertices are represented by coordinates of matrix entries.
+
+$`\begin{bmatrix}0,0 & 0,1 & 0,2\\1,0 & 1,1 & 1,2\\ 2,0 & 2,1 & 2,2 \end{bmatrix}`$.
+
+The core of BFS/DFS is to add neighbors of the current vertex to a queue/stack. The `get_neighbors` function returns all 4 (or 8 if you are allowed to go diagonally) coordinates of neighboring nodes.
+
+$`\begin{bmatrix} & r-1, c & \\r,c-1 & r,c & r,c+1\\  & r+1, c &  \end{bmatrix}`$.
+
+One way to get each neighbor's coordinates is to keep each neighbor's horizontal and vertical offsets (i.e., delta) in a list and add them to each vertex's coordinates.
+
+BFS Template:
+
+```python
+num_rows, num_cols = len(grid), len(grid[0])
+def get_neighbors(coord):
+    row, col = coord
+    delta_row = [-1, 0, 1, 0]
+    delta_col = [0, 1, 0, -1]
+    res = []
+    for i in range(len(delta_row)):
+        neighbor_row = row + delta_row[i]
+        neighbor_col = col + delta_col[i]
+        if 0 <= neighbor_row < num_rows and 0 <= neighbor_col < num_cols:
+            res.append((neighbor_row, neighbor_col))
+    return res
+
+from collections import deque
+
+def bfs(starting_node):
+    queue = deque([starting_node])
+    visited = set([starting_node])
+    while len(queue) > 0:
+        node = queue.popleft()
+        for neighbor in get_neighbors(node):
+            if neighbor in visited:
+                continue
+            # Do stuff with the node if required
+            # ...
+            queue.append(neighbor)
+            visited.add(neighbor)
+```
+
+Sometimes, one can overwrite the value in the matrix to keep track of the visited nodes without using a visited set.
+
+---
+
+#### Depth-First Search (DFS) 
+
+This approach recursively visits all connected land cells ('1') and marks them as visited ('0') to prevent revisiting.
+
+```python
+def numIslands(self, grid: List[List[str]]) -> int:
+        def dfs(row, col):
+            grid[row][col] = "0"
+
+            for dx, dy in zip(directions[:-1], directions[1:]):
+                new_row, new_col = row + dx, col + dy
+
+                if (
+                    0 <= new_row < rows
+                    and 0 <= new_col < cols
+                    and grid[new_row][new_col] == "1"
+                ):
+                    dfs(new_row, new_col)
+
+        num_of_islands = 0
+        directions = (-1, 0, 1, 0, -1)
+
+        rows, cols = len(grid), len(grid[0])
+
+        for row in range(rows):
+            for col in range(cols):
+                if grid[row][col] == "1":
+                    dfs(row, col)
+                    num_of_islands += 1
+
+        return num_of_islands
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(M * N)`, where `M` is the number of rows and `N` is the number of columns in the grid.
+- Space Complexity: `O(M * N)`, for the recursive stack in the worst case (entire grid is one connected component).
+
+#### Breadth-first Search (BFS)
+
+This approach uses a queue to iteratively visit and mark all connected land cells.
+
+```python
+from collections import deque
+
+def numIslands(self, grid: List[List[str]]) -> int:
+        def get_neighbors(coord):
+            res = []
+            row, col = coord
+            delta_row = [-1, 0, 1, 0]
+            delta_col = [0, 1, 0, -1]
+
+            for i in range(len(delta_row)):
+                r = row + delta_row[i]
+                c = col + delta_col[i]
+
+                if 0 <= r < num_rows and 0 <= c < num_cols:
+                    res.append((r, c))
+
+            return res
+            
+        def bfs(start):
+            queue = deque([start])
+            r, c = start
+            grid[r][c] = "0"
+
+            while queue:
+                node = queue.popleft()
+                for neighbor in get_neighbors(node):
+                    r, c = neighbor
+                    if grid[r][c] == "0":
+                        continue
+
+                    queue.append(neighbor)
+                    grid[r][c] = "0"
+
+        num_rows = len(grid)
+        num_cols = len(grid[0])
+
+        num_islands = 0
+        for r in range(num_rows):
+            for c in range(num_cols):
+                if grid[r][c] == "0":
+                    continue
+
+                bfs((r, c))
+                num_islands += 1
+
+        return num_islands
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(M * N)`, where `M` is the number of rows and `N` is the number of columns in the image.
+- Space Complexity: `O(V + E)`, where `V` is the number of vertices and `E` is the number of edges in the graph.
