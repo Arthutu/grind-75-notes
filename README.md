@@ -2420,3 +2420,46 @@ class Solution:
 
 - Time Complexity: `O(n * amount)`), where `n` is the number of coins.
 - Space Complexity: `O(amount)`, due to the `dp` array.
+
+## Product of Array Except Self
+[LeetCode Question](https://leetcode.com/problems/product-of-array-except-self)
+
+#### Solution
+
+1. Initialization:
+   - Create an array `answer` initialized to `1`. This array will hold the result.
+   - Initialize two variables, `left` and `right`, to `1`. These track the running product of elements to the left and right of the current index.
+2. First Pass (Left Products):
+   - Traverse the input array from left to right.
+   - For each index `i`, set `answer[i]` to the current value of `left`.
+   - Update `left` by multiplying it with `nums[i]`.
+3. Second Pass (Right Products):
+   - Traverse the input array from right to left.
+   - Multiply the current value in `answer[i]` by `right`, which holds the product of elements to the right of `i`.
+   - Update `right` by multiplying it with `nums[i]`.
+4. Return Result:
+   - The `answer` array now contains the product of all elements except the one at each index.
+
+```python
+def productExceptSelf(self, nums: List[int]) -> List[int]:
+        num_length = len(nums)
+      
+        answer = [1] * num_length
+      
+        left = 1
+        for i in range(num_length):
+            answer[i] = left
+            left *= nums[i]
+      
+        right = 1
+        for i in range(num_length - 1, -1, -1):
+            answer[i] *= right
+            right *= nums[i]
+      
+        return answer
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. Two passes over the input array, one from left to right and one from right to left, resulting in `2n`, which simplifies to `O(n)`.
+- Space Complexity: `O(1)`, excluding the output array `ans`.
