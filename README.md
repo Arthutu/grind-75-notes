@@ -2463,3 +2463,41 @@ def productExceptSelf(self, nums: List[int]) -> List[int]:
 
 - Time Complexity: `O(n)`. Two passes over the input array, one from left to right and one from right to left, resulting in `2n`, which simplifies to `O(n)`.
 - Space Complexity: `O(1)`, excluding the output array `ans`.
+
+## Min Stack
+[LeetCode Question](https://leetcode.com/problems/min-stack/)
+
+#### Solution
+
+To maintain the minimum element in constant time, we use a strategy that tracks the minimum at each state of the stack. The solution stores a tuple in the stack, where each tuple contains the value and the minimum at that point.
+
+With each push operation, the value is added to the stack along with the minimum of the new value and the current minimum (stored in the last element of the stack). This ensures that the minimum can be accessed in `O(1)` time for all stack states.
+
+```python
+class MinStack:
+
+    def __init__(self):
+        self.stack = []
+
+    def push(self, val: int) -> None:
+        curr_min = val if not self.stack else min(val, self.stack[-1][1])
+        self.stack.append((val, curr_min))
+
+    def pop(self) -> None:
+        self.stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1][0]
+
+    def getMin(self) -> int:
+        return self.stack[-1][1]
+```
+**Complexity Analysis**
+
+- Time Complexity:
+  - `__init__`:  `O(1)`, as initializing an empty list is constant time.
+  - `push`: `O(1)`, since appending to a list and calculating the minimum are constant-time operations.
+  - `pop`: `O(1)`, because removing the last element from a list takes constant time.
+  - `top`:  `O(1)`, as accessing the last element of a list is constant time.
+  - `getMin`: `O(1)`, since the minimum is always stored in the last element of the stack.
+- Space Complexity: `O(n)`, where `n` is the number of elements in the stack. Each element stores its value and the minimum at that point, resulting in linear space usage.
