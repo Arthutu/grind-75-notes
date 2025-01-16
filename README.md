@@ -2705,3 +2705,67 @@ def numIslands(self, grid: List[List[str]]) -> int:
 
 - Time Complexity: `O(M * N)`, where `M` is the number of rows and `N` is the number of columns in the image.
 - Space Complexity: `O(V + E)`, where `V` is the number of vertices and `E` is the number of edges in the graph.
+
+## Rotting Oranges
+[LeetCode Question](https://leetcode.com/problems/rotting-oranges)
+
+#### Solutions:
+
+To solve the problem, we use **Breadth-First Search (BFS)**. This approach efficiently simulates the spread of rot from rotten oranges to adjacent fresh ones. The BFS processes all the rotten oranges in parallel for each time step.
+
+#### **Steps**:
+
+1. **Initialization**:
+   - Count the fresh oranges.
+   - Add all initially rotten oranges to a queue.
+
+2. **Simulate Rotting Process**:
+   - While there are fresh oranges and the queue is not empty:
+     - Increment the timer (minutes).
+     - Process all rotten oranges in the current queue level.
+     - For each rotten orange, attempt to rot its adjacent fresh oranges. If successful, add them to the queue.
+
+3. **Result**:
+   - If there are still fresh oranges left after the BFS, return `-1`. Otherwise, return the total time elapsed.
+
+
+```python
+def orangesRotting(self, grid: List[List[int]]) -> int:
+        rows = len(grid)
+        cols = len(grid[0])
+        fresh_count = 0
+        queue = deque()
+
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] == 2:
+                    queue.append((r, c))
+                elif grid[r][c] == 1:
+                    fresh_count += 1
+
+        minutes = 0
+
+        while queue and fresh_count > 0:
+            minutes += 1
+
+            for _ in range(len(queue)):
+                r, c = queue.popleft()
+
+                for delta_row, delta_col in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
+                    x, y = r + delta_row, c + delta_col
+
+                    if 0 <= x < rows and 0 <= y < cols and grid[x][y] == 1:
+                        fresh_count -= 1
+                        grid[x][y] = 2
+                        queue.append((x, y))
+
+        return minutes if fresh_count == 0 else -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(M * N)`
+  - Each cell is processed at most once during the BFS traversal.
+  - `M` and `N` are the grid's rows and columns.
+- Space Complexity: `O(M * N)`
+  - The queue can hold up to all cells in the grid in the worst case.
