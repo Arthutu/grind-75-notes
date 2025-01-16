@@ -2810,3 +2810,54 @@ def search(self, nums: List[int], target: int) -> int:
 
 - Time Complexity: `O(log n)`. The array is halved at each step, resulting in logarithmic time complexity.
 - Space Complexity: `O(1)`. The search is performed in place, requiring no additional space.
+
+## Combination Sum
+[LeetCode Question](https://leetcode.com/problems/combination-sum)
+
+This problem is best solved using **Depth-First Search (DFS)** with backtracking. The key idea is to explore all potential combinations by recursively subtracting candidate numbers from the target and adding them to the current path. To avoid duplicate combinations, we impose an ordering constraint where we only use candidates starting from the current index or later.
+
+### **Steps**
+
+1. **Sort the Candidates**:
+   - Sorting helps in pruning branches early when the remaining target becomes negative.
+
+2. **DFS with Backtracking**:
+   - Start from the first candidate.
+   - Subtract the current candidate from the remaining target.
+   - If the remaining target becomes zero, add the current path to the result.
+   - If the remaining target becomes negative, terminate the current path.
+
+3. **Pruning**:
+   - Skip candidates that exceed the remaining target.
+
+4. **Avoid Duplicate Combinations**:
+   - Only consider candidates from the current index or later in the recursion to maintain order and avoid duplicates.
+
+
+```python
+def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        res = []
+
+        def dfs(nums, start_index, remaining, path):
+            if remaining == 0:
+                res.append(path[:])
+                return
+
+            for i in range(start_index, len(nums)):
+                num = nums[i]
+                if remaining - num < 0:
+                    continue
+
+                dfs(nums, i, remaining - num, path + [num])
+
+        candidates.sort()
+        dfs(candidates, 0, target, [])
+
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n^target/min(candidates))`. The depth of the recursion tree is proportional to 
+`target/min(candidates)`and each level has `n` branches.
+- Space Complexity: `O(target/min(candidates))`. The maximum depth of the recursion tree determines the space usage.
