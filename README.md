@@ -2769,3 +2769,44 @@ def orangesRotting(self, grid: List[List[int]]) -> int:
   - `M` and `N` are the grid's rows and columns.
 - Space Complexity: `O(M * N)`
   - The queue can hold up to all cells in the grid in the worst case.
+
+## Search in Rotated Sorted Array
+[LeetCode Question](https://leetcode.com/problems/search-in-rotated-sorted-array)
+
+The key observation is that at least one half of the array (either left or right) will always be sorted. Using this property, we can adapt binary search as follows:
+
+1. **Determine the Sorted Half**:
+   - Compare the middle element (`nums[mid]`) with the leftmost (`nums[left]`) or rightmost (`nums[right]`) element to determine which half is sorted.
+
+2. **Narrow the Search Range**:
+   - If the target lies within the sorted half, adjust the pointers (`left` and `right`) to search within this half.
+   - Otherwise, search in the other half.
+
+3. **Repeat Until Found**:
+   - Continue until the target is found or the search range is exhausted.
+
+```python
+def search(self, nums: List[int], target: int) -> int:
+        left, right = 0, len(nums) - 1
+
+        while left < right:
+            mid = (left + right) // 2
+
+            if nums[0] <= nums[mid]:
+                if nums[0] <= target <= nums[mid]:
+                    right = mid
+                else:
+                    left = mid + 1
+            else:
+                if nums[mid] < target <= nums[-1]:
+                    left = mid + 1
+                else:
+                    right = mid
+
+        return left if nums[left] == target else -1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(log n)`. The array is halved at each step, resulting in logarithmic time complexity.
+- Space Complexity: `O(1)`. The search is performed in place, requiring no additional space.
