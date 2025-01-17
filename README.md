@@ -2912,3 +2912,32 @@ def permute(self, nums: List[int]) -> List[List[int]]:
 
 - Time Complexity: `O(n!)`. There are `n!` permutations for an array of size `n`, and generating each permutation takes `O(n)` due to the path copy operation.
 - Space Complexity: `O(n)`. The recursion depth is `O(n)`, and the path and used lists each take `O(n)` space.
+
+## Merge Intervals
+[LeetCode Question](https://leetcode.com/problems/merge-intervals/)
+
+This problem is solved using the strategy to merge intervals explained in the [Insert Interval question](#good-to-know--intervals).
+
+```python
+def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort()
+        res = []
+
+        def overlap(a, b):
+            return not (a[1] < b[0] or b[1] < a[0])
+
+        for interval in intervals:
+            if not res or not overlap(res[-1], interval):
+                res.append(interval)
+            else:
+                res[-1][1] = max(res[-1][1], interval[1])
+
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n log n)`.
+  - Sorting the intervals takes `O(n log n)`, where `n` is the number of intervals.
+  - Merging intervals requires a single traversal of the list, which is `O(n)`. Combined, the complexity is dominated by the sorting step, which is the higher order term, resulting in `O(n log n)`.
+- Space Complexity: `O(n)`. The result list `res` can store up to `n` intervals in the worst case, where no intervals overlap.
