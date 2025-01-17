@@ -2941,3 +2941,48 @@ def merge(self, intervals: List[List[int]]) -> List[List[int]]:
   - Sorting the intervals takes `O(n log n)`, where `n` is the number of intervals.
   - Merging intervals requires a single traversal of the list, which is `O(n)`. Combined, the complexity is dominated by the sorting step, which is the higher order term, resulting in `O(n log n)`.
 - Space Complexity: `O(n)`. The result list `res` can store up to `n` intervals in the worst case, where no intervals overlap.
+
+## Lowest Common Ancestor of a Binary Tree
+[LeetCode Question](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)
+
+The solution uses a **Postorder Depth-First Search (DFS)** traversal. Postorder traversal ensures that we process the current node only after its left and right subtrees have been processed. This is particularly useful for determining the LCA, as we can gather information from both subtrees before making a decision.
+
+### Steps
+
+1. **Base Case**:
+   - If the current node is `null`, return `null`.
+   - If the current node is either `p` or `q`, return the current node.
+
+2. **Recursive Calls**:
+   - Recursively find the LCA in the left and right subtrees.
+
+3. **Decision**:
+   - If both the left and right subtrees return `non-null` values, the current node is the LCA.
+   - If only one subtree returns a `non-null` value, propagate that value upward.
+   - If both subtrees return `null`, propagate `null`.
+
+
+```python
+def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return None
+        
+        if root in (p, q):
+            return root
+        
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+
+        if left and right:
+            return root
+        
+        if left or right:
+            return left or right
+        
+        return None
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. The algorithm visits each node exactly once in the worst case, where `n` is the total number of nodes in the tree.
+- Space Complexity: `O(h)`. The recursion stack depth depends on the height `h` of the tree. In the worst case (skewed tree), `h=O(n)`.
