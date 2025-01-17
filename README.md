@@ -2713,7 +2713,7 @@ def numIslands(self, grid: List[List[str]]) -> int:
 
 To solve the problem, we use **Breadth-First Search (BFS)**. This approach efficiently simulates the spread of rot from rotten oranges to adjacent fresh ones. The BFS processes all the rotten oranges in parallel for each time step.
 
-#### **Steps**:
+#### Steps:
 
 1. **Initialization**:
    - Count the fresh oranges.
@@ -2816,7 +2816,7 @@ def search(self, nums: List[int], target: int) -> int:
 
 This problem is best solved using **Depth-First Search (DFS)** with backtracking. The key idea is to explore all potential combinations by recursively subtracting candidate numbers from the target and adding them to the current path. To avoid duplicate combinations, we impose an ordering constraint where we only use candidates starting from the current index or later.
 
-### **Steps**
+### Steps
 
 1. **Sort the Candidates**:
    - Sorting helps in pruning branches early when the remaining target becomes negative.
@@ -2861,3 +2861,54 @@ def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
 - Time Complexity: `O(n^target/min(candidates))`. The depth of the recursion tree is proportional to 
 `target/min(candidates)`and each level has `n` branches.
 - Space Complexity: `O(target/min(candidates))`. The maximum depth of the recursion tree determines the space usage.
+
+## Permutations
+[LeetCode Question](https://leetcode.com/problems/permutations)
+
+This problem is best solved using **Depth-First Search (DFS)** with backtracking. The key idea is to explore all possible orders of the given numbers by recursively building permutations and marking numbers as used during the recursion.
+
+### Steps
+
+1. **Initialization**:
+   - Create a `res` list to store the results.
+   - Use a `path` list to build permutations during the DFS traversal.
+   - Maintain a `used` list to track which numbers have been included in the current path.
+
+2. **DFS with Backtracking**:
+   - If the length of the `path` equals the length of `nums`, add the current path to `res` and return.
+   - Iterate through the `nums` array:
+     - Skip numbers that are already marked as `used`.
+     - Add the current number to the `path` and mark it as `used`.
+     - Recursively call DFS to continue building the permutation.
+     - Backtrack by removing the number from the `path` and marking it as not `used`.
+
+```python
+def permute(self, nums: List[int]) -> List[List[int]]:
+        res = []
+        path = []
+        used = [False] * len(nums)
+
+        def dfs(start_index):
+            if start_index == len(nums):
+                res.append(path[:])
+                return
+            
+            for i, num in enumerate(nums):
+                if used[i]:
+                    continue
+                
+                path.append(num)
+                used[i] = True
+                dfs(start_index + 1)
+
+                path.pop()
+                used[i] = False
+        
+        dfs(0)
+        return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n!)`. There are `n!` permutations for an array of size `n`, and generating each permutation takes `O(n)` due to the path copy operation.
+- Space Complexity: `O(n)`. The recursion depth is `O(n)`, and the path and used lists each take `O(n)` space.
