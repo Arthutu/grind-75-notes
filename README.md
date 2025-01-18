@@ -3031,3 +3031,160 @@ class TimeMap:
   - `set`: `O(1)`, appending to the list is constant time.
   - `get`: `O(log n)`, where `n` is the number of timestamps for the key, due to binary search.
 - Space Complexity: `O(n)`, where `n` is the total number of set operations. Each operation stores a key, timestamp, and value.
+
+## Accounts Merge
+[LeetCode Question](https://leetcode.com/problems/accounts-merge)
+
+---
+#### [Good To Know 📚] Disjoint Set Union (Union Find)
+
+The **Union-Find** data structure is ideal for problems involving merging or grouping disjoint sets of elements. It supports two primary operations:
+
+1. **Find**: Determines the "root" or representative of a set.
+2. **Union**: Merges two sets into one.
+
+### Implementation
+
+The sets are represented as trees, where the root of each tree serves as the unique identifier (Set ID). Initially, every element is its own parent, forming individual sets. Merging two sets involves connecting one tree's root to the other, uniting the two sets. The find operation traverses up the tree to locate the root, which represents the set ID.
+
+```python
+class UnionFind:
+    def __init__(self):
+        # Maps each element to its parent; initially, each element is its own parent
+        self.id = {}
+
+    def find(self, x):
+        # Retrieve the parent of x; default to x if not in the map
+        y = self.id.get(x, x)
+        # If x is not its own parent, recursively find the root
+        if y != x:
+            y = self.find(y)
+        return y
+
+    def union(self, x, y):
+        # Merge the sets by connecting their roots
+        self.id[self.find(x)] = self.find(y)
+```
+
+#### Path Compression Optimization
+
+The performance of the `find` operation can degrade if the trees become unbalanced, leading to deep recursion. **Path compression** addresses this issue by flattening the tree during the `find` operation. Each node visited during the traversal is directly linked to the root, reducing the tree's height and improving future queries.
+
+With path compression, the amortized time complexity of both `find` and `union` becomes nearly constant `(O(α(n)))`, where `α` is the [inverse Ackermann function](https://en.wikipedia.org/wiki/Ackermann_function).
+
+```python
+class UnionFind:
+    def __init__(self):
+        self.id = {}
+
+    def find(self, x):
+        y = self.id.get(x, x)
+        if y != x:
+            # Path compression: update the parent of x to the root
+            self.id[x] = y = self.find(y)
+        return y
+
+    def union(self, x, y):
+        # Merge the sets by connecting their roots
+        self.id[self.find(x)] = self.find(y)
+```
+
+### Key Insights
+
+- **Initial Setup**: Each element starts as its own set.
+- **Union Operation**: Links one set's root to another, merging the sets.
+- **Find Operation**: Traverses up the tree to find the root (set ID), with path compression for efficiency.
+- **Efficiency**: With path compression, the data structure achieves near-constant time complexity for both operations.
+
+### Practical Applications
+Union-Find is widely used in algorithms and problems involving connected components, such as:
+
+- Kruskal's algorithm for finding Minimum Spanning Trees.
+- Detecting cycles in a graph.
+- Dynamic connectivity problems.
+---
+
+### Solution
+
+Each account consists of a username and a list of email addresses. If two accounts share at least one email, they belong to the same group and should be merged. The challenge is to identify these groups efficiently and output the merged accounts with emails sorted lexicographically.
+
+#### Steps
+
+1. **Model the Problem:**
+   - Treat each email address as a node in a graph.
+   - Add edges between nodes that belong to the same account.
+   - The problem reduces to finding connected components in this graph.
+2. **Union-Find Data Structure:**
+   - Use Union-Find to group emails into connected components.
+   - Each component represents a set of emails belonging to a single user.
+3. **Steps to Solve**:
+   - **Step 1**: Iterate through the accounts. For each account:
+     - Treat the first email as a "parent" or representative.
+     - Union all other emails in the account with the first email.
+   - **Step 2**: After processing all accounts, use the find operation to determine the root (representative) of each email.
+   - **Step 3**: Group emails by their root, and associate each group with the corresponding username.
+   - **Step 4**: Sort the emails in each group lexicographically and format the result.
+
+```python
+class UnionFind:
+    def __init__(self):
+        self.id = {}
+
+    def find(self, x):
+        y = self.id.get(x, x)
+
+        if y != x:
+            self.id[x] = y = self.find(y)
+
+        return y
+
+    def union(self, x, y):
+        self.id[self.find(x)] = self.find(y)
+
+
+class Solution:
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        union_find = UnionFind()
+        all_user_emails = set()
+
+        for one_account in accounts:
+            username = one_account[0]
+            email_parent = None
+
+            for email in one_account[1:]:
+                user_email_pair = (username, email)
+                all_user_emails.add(user_email_pair)
+
+                if email_parent is None:
+                    email_parent = user_email_pair
+                else:
+                    union_find.union(email_parent, user_email_pair)
+
+        account_associations = {}
+        for user_email_pair in all_user_emails:
+            ancestor = union_find.find(user_email_pair)
+
+            if ancestor not in account_associations:
+                account_associations[ancestor] = []
+
+            account_associations[ancestor].append(user_email_pair)
+
+        return_res = []
+        for user in account_associations:
+            one_user = [user[0]]
+
+            for email in sorted(account_associations[user]):
+                one_user.append(email[1])
+                
+            return_res.append(one_user)
+
+        return sorted(return_res, key=lambda a: (a[0], a[1]))
+```
+
+**Complexity Analysis**
+
+- Time Complexity:
+  - Union-Find operations: `O(n⋅α(n))`, where `n` is the total number of emails.
+  - Sorting emails: `O(nlogn)`
+  - Overall: `O(nlogn)`
+- Space Complexity: `O(n), storage for email_to_name and parent.
