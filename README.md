@@ -2986,3 +2986,48 @@ def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -
 
 - Time Complexity: `O(n)`. The algorithm visits each node exactly once in the worst case, where `n` is the total number of nodes in the tree.
 - Space Complexity: `O(h)`. The recursion stack depth depends on the height `h` of the tree. In the worst case (skewed tree), `h=O(n)`.
+
+## Time Based key-Value Store
+[LeetCode Question](https://leetcode.com/problems/time-based-key-value-store/)
+
+The solution uses a dictionary where each key maps to a list of `[timestamp, value]` pairs. The `set` operation appends new entries to this list, and the `get` operation performs a binary search to find the largest timestamp less than or equal to the given timestamp.
+
+```python
+from collections import defaultdict
+
+
+class TimeMap:
+
+    def __init__(self):
+        self.kv = defaultdict(list)
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.kv[key].append([timestamp, value])
+
+    def get(self, key: str, timestamp: int) -> str:
+        if key not in self.kv:
+            return ""
+
+        left, right, pos = 0, len(self.kv[key]) - 1, -1
+
+        while left <= right:
+            mid = (left + right) // 2
+
+            if self.kv[key][mid][0] <= timestamp:
+                left = mid + 1
+                pos = mid
+            else:
+                right = mid - 1
+
+        if pos == -1:
+            return ""
+
+        return self.kv[key][pos][1]
+```
+
+**Complexity Analysis**
+
+- Time Complexity:
+  - `set`: `O(1)`, appending to the list is constant time.
+  - `get`: `O(log n)`, where `n` is the number of timestamps for the key, due to binary search.
+- Space Complexity: `O(n)`, where `n` is the total number of set operations. Each operation stores a key, timestamp, and value.
