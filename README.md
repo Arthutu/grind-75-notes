@@ -3188,3 +3188,119 @@ class Solution:
   - Sorting emails: `O(nlogn)`
   - Overall: `O(nlogn)`
 - Space Complexity: `O(n), storage for email_to_name and parent.
+
+## Sort Colors
+[LeetCode Question](https://leetcode.com/problems/sort-colors)
+
+### Solutions
+
+1. **Sorting Algorithms** 
+2. **Dutch National Flag Algorithm**
+3. **Couting**
+
+#### Sorting Algorithms
+
+This solution employs standard sorting techniques, such as Bubble Sort, Merge Sort, or Quick Sort. These algorithms are general-purpose and can sort the array effectively, though they may not be the most optimal for this problem.
+
+#### Example: Bubble Sort
+[Bubble Sort](https://en.wikipedia.org/wiki/Bubble_sort) iterates through the array multiple times, swapping adjacent elements if they are out of order.
+
+```python
+def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+
+        length = len(nums)
+
+        for i in range(length):
+            swapped = False
+
+            for j in range(0, length - i - 1):
+                if nums[j] > nums[j + 1]:
+                    nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                    swapped = True
+
+            if not swapped:
+                break
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n^2)` (not efficient for large arrays).
+- Space Complexity: `O(1)`.
+
+#### Dutch National Flag Algorithm
+
+[The Dutch National Flag algorithm proposed by Edsger Dijkstra](https://en.wikipedia.org/wiki/Dutch_national_flag_problem) is a highly efficient method specifically tailored for three-way partitioning problems. It divides the array into three regions:
+
+- `low`: All elements before this index are 0s (lowest value).
+- `mid`: Pointer to the current element being inspected (unknown value).
+- `high`: All elements after this index are 2s (high value).
+
+#### Steps
+
+1. Initialize pointers `low`, `mid`, and `high`.
+2. Traverse the array:
+   - If the current element is 0, swap it with the element at `low` and increment both `low` and `mid`.
+   - If the current element is 1, simply move `mid` forward.
+   - If the current element is 2, swap it with the element at `high` and decrement `high`.
+   - Repeat until `mid` exceeds `high`.
+
+```python
+def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+
+        low, mid, high = 0, 0, len(nums) - 1
+
+        while mid <= high:
+            if nums[mid] == 0:
+                nums[mid], nums[low] = nums[low], nums[mid]
+                mid += 1
+                low += 1
+            elif nums[mid] == 1:
+                mid += 1
+            else:
+                nums[mid], nums[high] = nums[high], nums[mid]
+                high -= 1 
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, as each element is processed at most once.
+- Space Complexity: `O(1)`, as the sorting is done in-place.
+  
+#### Counting Sort
+
+This solution counts the occurrences of each color (0, 1, 2) and then updates the array based on these counts.
+
+#### Steps:
+
+1. Traverse the array and count the occurrences of 0s, 1s, and 2s.
+2. Overwrite the array:
+   - Fill the first `count[0]` positions with 0.
+   - Fill the next `count[1]` positions with 1.
+   - Fill the remaining positions with 2.
+
+```python
+def sortColors(self, nums: List[int]) -> None:
+    nums_red = nums_white = nums_blue = 0
+    for num in nums:
+        if num == 0:
+            nums_red += 1
+        elif num == 1:
+            nums_white += 1
+        else:
+            nums_blue += 1
+
+    nums[:nums_red] = [0] * nums_red
+    nums[nums_red:nums_red + nums_white] = [1] * nums_white
+    nums[nums_red + nums_white:] = [2] * nums_blue
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, as we traverse the array twice.
+- Space Complexity: `O(1)`, as the sorting is done in-place.
