@@ -3353,3 +3353,44 @@ def wordBreak(self, s: str, wordDict: List[str]) -> bool:
 - Space Complexity: `O(n)`
   - The recursion stack can go as deep as `O(n)` (height of the state-space tree).
   - The memoization array also requires `O(n)` space.
+
+## Partition Equal Subset Sum
+[LeetCode Question](https://leetcode.com/problems/partition-equal-subset-sum)
+
+### Solution
+
+To determine if an array can be partitioned into two subsets with equal sums, we can use a **bottom-up dynamic programming (DP)** approach. In this approach, we iteratively build the solution using smaller subproblems. The key idea is to use a DP table to track whether a specific sum can be achieved with a subset of the array elements.
+
+#### Steps:
+
+1. **Target Sum Calculation:**  If the total sum of the array is odd, it is impossible to partition it into two equal subsets. Otherwise, the target sum for each subset is `total_sum / 2`.
+2. **DP Table Definition:**  Let `dp[s]` represent whether a sum `s` can be formed using a subset of the array.
+3. **Transition Formula:**  For each number in the array, update the `dp` table:
+   - If `dp[s - num]` is `True`, set `dp[s]` to `True`. This means that if we can form the sum `s - num`, then we can form the sum `s` by including `num`.
+5. **Base Case:**  `dp[0] = True` because a sum of 0 can always be achieved by choosing no elements.
+6. **Optimization:**  Instead of maintaining a 2D table, we use a 1D array to save space. Update the DP array in reverse to avoid overwriting values during the iteration.
+
+```python
+def canPartition(nums: List[int]) -> bool:
+    total_sum = sum(nums)
+    
+    # If the total sum is odd, it's impossible to partition into two equal subsets
+    if total_sum % 2 != 0:
+        return False
+
+    target = total_sum // 2
+    dp = [False] * (target + 1)
+    dp[0] = True  # Base case
+
+    for num in nums:
+        # Update the DP array in reverse
+        for s in range(target, num - 1, -1):
+            dp[s] = dp[s] or dp[s - num]
+
+    return dp[target]
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * target)`, where `n` is the number of elements in the array and `target` is the target sum `(total_sum / 2)`.
+- Space Complexity: `O(target)`, as we use a 1D array of size `target + 1`.
