@@ -3394,3 +3394,87 @@ def canPartition(nums: List[int]) -> bool:
 
 - Time Complexity: `O(n * target)`, where `n` is the number of elements in the array and `target` is the target sum `(total_sum / 2)`.
 - Space Complexity: `O(target)`, as we use a 1D array of size `target + 1`.
+
+## String to Integer (atoi)
+[LeetCode Question](https://leetcode.com/problems/string-to-integer-atoi)
+
+### Solution
+
+The solution implements the conversion process through a series of steps that correspond to the rules provided in the problem description:
+
+1. **Initialization:**  
+   - The function first checks if the string `s` is not empty.  
+   - Important variables are initialized: `n` for the length of the string, `i` for the current index, and `res` for the resulting integer value.
+
+2. **Whitespace Skipping:**  
+   - Using a `while` loop, the function skips over leading whitespace characters (`' '`) until a non-whitespace character is encountered by incrementing the `i` index.  
+   - If `i` becomes equal to `n` (the length of the string), the string contains only whitespace, and the function returns `0`.
+
+3. **Sign Detection:**  
+   - The next character is checked to determine the sign of the resultant integer.  
+   - If it's `'-'`, the variable `sign` is set to `-1`, otherwise `1`.  
+   - If a sign character is found, `i` is incremented to move past it.
+
+4. **Integer Conversion:**  
+   - A `while` loop iterates over the remaining characters of the string as long as they are digits.  
+   - Each digit is converted to an integer using `int(s[i])` and added to `res` after multiplying the current `res` by 10 (shifting the number one decimal place to the left).  
+   - The loop stops if a non-digit character is encountered.
+
+5. **Overflow Handling:**  
+   - Before adding the new digit to `res`, potential overflow is checked.  
+   - For positive numbers, the function checks if `res > (2**31 - 1) // 10` or if `res == (2**31 - 1) // 10` and the next digit (`c`) is greater than `7`.  
+   - For negative numbers, the same logic is applied but with the limits of `-2**31`.  
+   - If overflow is detected, the maximum or minimum 32-bit signed integer value is returned based on the sign.
+
+6. **Result Return:**  
+   - Once the loop finishes, the integer is adjusted with the sign and returned as the result.
+
+
+```python
+def myAtoi(self, s: str) -> int:
+    # Return 0 if the string is empty
+    if not s:
+        return 0
+
+    length_of_string = len(s)
+    index = 0
+
+    # Skip leading whitespaces
+    while index < length_of_string and s[index] == " ":
+        index += 1
+
+    # After skipping whitespaces, if we're at the end it means it's an empty string
+    if index == length_of_string:
+        return 0
+
+    # Check if we have a sign, and set the sign accordingly
+    sign = -1 if s[index] == "-" else 1
+    if s[index] in ["-", "+"]:  # Skip the sign for next calculations
+        index += 1
+
+    result = 0
+    max_safe_int = (2**31 - 1) // 10  # Precomputed to avoid overflow
+
+    while index < length_of_string:
+        # If the current character is not a digit, break from loop
+        if not s[index].isdigit():
+            break
+
+        digit = int(s[index])
+
+        # Check for overflow cases
+        if result > max_safe_int or (result == max_safe_int and digit > 7):
+            return 2**31 - 1 if sign == 1 else -(2**31)  # Clamp to INT_MIN or INT_MAX
+
+        # Append current digit to result
+        result = result * 10 + digit
+        index += 1
+
+    # Apply sign and return final result
+    return sign * result
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`, where `n` is the length of the string.
+- Space Complexity: `O(1)`. The function uses a fixed amount of space for variables and does not allocate additional space that grows with the input size.
