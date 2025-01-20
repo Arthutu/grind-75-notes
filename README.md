@@ -3304,3 +3304,52 @@ def sortColors(self, nums: List[int]) -> None:
 
 - Time Complexity: `O(n)`, as we traverse the array twice.
 - Space Complexity: `O(1)`, as the sorting is done in-place.
+
+## Word Break
+[LeetCode Question](https://leetcode.com/problems/word-break)
+
+### Solution
+
+To determine if a string `s` can be segmented into a space-separated sequence of words from a given dictionary `wordDict`, we can explore a recursive approach with memoization. 
+
+The idea is to check if any word in `wordDict` is a prefix of the current substring of `s`. If a word matches, we treat it as "matched" and recursively check the remaining part of the string. This process can be visualized as a state-space tree, where each level represents a substring of `s` being matched with words from the dictionary.
+
+
+
+```python
+def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+    memo = {}
+
+    def dfs(start_index):
+        # If we've reached the end of the string, return True
+        if start_index == len(s):
+            return True
+
+        # If the result is already computed, return it
+        if start_index in memo:
+            return memo[start_index]
+
+        # Check each word in the dictionary
+        for word in wordDict:
+            # If the word is a prefix of the current substring
+            if s[start_index:].startswith(word):
+                # Recursively check the remaining substring
+                if dfs(start_index + len(word)):
+                    memo[start_index] = True
+                    return True
+
+        # If no match is found, store False in memo and return
+        memo[start_index] = False
+        return False
+
+    return dfs(0)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * m * k)`
+  - The memoization array has a size of `O(n)`, where `n` is the length of `s`.
+  - For each state, we iterate over all words in `wordDict `(of size `m`) and perform a prefix check, which takes `O(k)` time, where `k` is the maximum length of a word in the dictionary.
+- Space Complexity: `O(n)`
+  - The recursion stack can go as deep as `O(n)` (height of the state-space tree).
+  - The memoization array also requires `O(n)` space.
