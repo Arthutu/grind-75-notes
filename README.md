@@ -3575,3 +3575,51 @@ def subsets(self, nums: List[int]) -> List[List[int]]:
 - Space Complexity: `O(n * 2^n)`
   - The space required for storing all subsets is proportional to the total number of subsets (`2^n`) multiplied by the average subset size (`n`).
   - Additionally, the recursion stack depth is `O(n)`.
+
+## Binary Tree Right Side View
+[LeetCode Question](https://leetcode.com/problems/binary-tree-right-side-view)
+
+### Solution
+
+To solve the problem of finding the right-side view of a binary tree, we can use **Breadth-First Search (BFS)**. The idea is to traverse the tree level by level and capture the first node we encounter at each level, which corresponds to the rightmost node for that level when we process the nodes in the correct order.
+
+1. **Initialization:**  
+   - Use a queue to store nodes level by level. Start with the root node.
+
+2. **Traversal:**  
+   - For each level, capture the first node in the queue (this is the rightmost node for that level since we add right children before left children to the queue).
+
+3. **Processing Nodes:**  
+   - Dequeue all nodes of the current level, and enqueue their children (right child first, then left child) to ensure the rightmost node appears first in subsequent levels.
+
+4. **Result Construction:**  
+   - Append the value of the rightmost node for each level to the result list.
+
+
+```python
+def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+    if not root:
+        return []
+
+    res = []
+    queue = deque([root])
+
+    while queue:
+        n = len(queue)
+        # Append the first node's value (rightmost for this level)
+        res.append(queue[0].val)
+
+        for _ in range(n):
+            node = queue.popleft()
+            # Add right child first, then left child
+            for child in [node.right, node.left]:
+                if child is not None:
+                    queue.append(child)
+
+    return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. Each node is visited once during the traversal.
+- Space Complexity: `O(n)`. In the worst case, the queue can contain all nodes at the last level of the tree, which is proportional to `n` for a balanced binary tree.
