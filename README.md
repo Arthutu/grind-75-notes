@@ -3518,3 +3518,60 @@ def spiralOrder(self, matrix):
 
 - Time Complexity: `O(c * r)`, where `c` is the number of columns and `r` is the number of rows. Each cell is visited exactly once.
 - Space Complexity: `O(1)`, since the input matrix is modified in place to mark visited cells, avoiding the need for additional storage.
+
+## Subsets
+[LeetCode Question](https://leetcode.com/problems/subsets/description/)
+
+### Solution
+
+The problem requires generating all possible subsets (the power set) of a given list of integers. This can be efficiently achieved using Depth-First Search (DFS) with backtracking.
+
+The DFS-based approach works as follows:
+
+1. **Recursive Traversal:**  
+   At each step, we decide whether to include the current number in the subset or not. This is achieved by iterating through the numbers starting from the current index.
+
+2. **Building Subsets:**  
+   - The `path` variable represents the current subset being constructed.
+   - At every node in the DFS tree, the current `path` is added to the result list `res`.
+
+3. **Backtracking:**  
+   After exploring all subsets that include the current number, we backtrack by removing it from the `path` to explore subsets that exclude it.
+
+4. **Optimization:**  
+   - The recursion starts at the current index `i`, ensuring that each subset is unique and avoiding backward branches.
+   - This approach avoids duplicate subsets by pruning unnecessary branches.
+
+```python
+def subsets(self, nums: List[int]) -> List[List[int]]:
+    n = len(nums)
+    res = []
+
+    def dfs(i, path):
+        # Add the current subset to the result
+        res.append(path[:])
+
+        # Iterate through the remaining numbers
+        for num_idx in range(i, len(nums)):
+            # Include the current number in the subset
+            path.append(nums[num_idx])
+            
+            # Recurse with the next index
+            dfs(num_idx + 1, path)
+            
+            # Backtrack: remove the last number added
+            path.pop()
+
+    # Start DFS with an empty path
+    dfs(0, [])
+    return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n * 2^n)`
+  - There are `2^n` subsets for a list of size `n`.
+  - Each subset takes `O(n)` time to construct due to the `path[:]` operation.
+- Space Complexity: `O(n * 2^n)`
+  - The space required for storing all subsets is proportional to the total number of subsets (`2^n`) multiplied by the average subset size (`n`).
+  - Additionally, the recursion stack depth is `O(n)`.
