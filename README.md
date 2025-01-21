@@ -3478,3 +3478,43 @@ def myAtoi(self, s: str) -> int:
 
 - Time Complexity: `O(n)`, where `n` is the length of the string.
 - Space Complexity: `O(1)`. The function uses a fixed amount of space for variables and does not allocate additional space that grows with the input size.
+
+## Spiral Matrix
+[LeetCode Question](https://leetcode.com/problems/spiral-matrix/)
+
+### Solution
+
+To solve this problem, we simulate the process of traversing the matrix in a spiral order. The key idea is to keep moving in the current direction (starting with "right") until we hit a boundary or a previously visited cell. At that point, we turn clockwise and continue the traversal.
+
+```python
+def spiralOrder(self, matrix):
+    """
+    :type matrix: List[List[int]]
+    :rtype: List[int]
+    """
+    c, r = len(matrix[0]), len(matrix)  # Columns and rows
+    x, y, dx, dy = 0, 0, 1, 0  # Starting position and direction (right)
+    ans = []  # Resultant spiral order
+    
+    for _ in range(c * r):  # Traverse all cells
+        # Append the current cell to the result
+        ans.append(matrix[y][x])
+        
+        # Mark the current cell as visited
+        matrix[y][x] = "*"
+        
+        # Check if the next move is valid
+        if not (0 <= x + dx < c) or not (0 <= y + dy < r) or matrix[y + dy][x + dx] == "*":
+            # Change direction (clockwise turn)
+            dx, dy = -dy, dx
+        
+        # Move to the next cell
+        x, y = x + dx, y + dy
+    
+    return ans
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(c * r)`, where `c` is the number of columns and `r` is the number of rows. Each cell is visited exactly once.
+- Space Complexity: `O(1)`, since the input matrix is modified in place to mark visited cells, avoiding the need for additional storage.
