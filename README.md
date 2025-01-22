@@ -3727,5 +3727,70 @@ def uniquePaths(self, m: int, n: int) -> int:
 
 **Complexity Analysis**
 
-- Time Complexity: O(n * m). We iterate through all the cells in the grid to compute their values.
-- Space Complexity: O(n * m). The `dp` table requires space proportional to the size of the grid.
+- Time Complexity: `O(n * m)`. We iterate through all the cells in the grid to compute their values.
+- Space Complexity: `O(n * m)`. The `dp` table requires space proportional to the size of the grid.
+
+## Construct Binary Tree from Preorder and Inorder Traversal
+[LeetCode Question](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal)
+
+1. **Preorder Traversal:**  
+   The first element is always the root of the tree.  
+   Traversal order: **root → left subtree → right subtree**.
+
+2. **Inorder Traversal:**  
+   The root splits the array into the left and right subtrees.  
+   Traversal order: **left subtree → root → right subtree**.
+
+### Steps
+
+1. **Mapping Values for Fast Lookup:**  
+   Use a dictionary to map each value in the `inorder` traversal to its index. This allows `O(1)` lookup for the root's position in the `inorder` array.
+
+2. **Recursive Construction:**  
+   Define a recursive function `build_tree(preorder_index, inorder_start, size)`:
+   - **Base Case:** If `size <= 0`, return `None` (empty subtree).
+   - **Root Identification:** The root of the current subtree is `preorder[preorder_index]`.
+   - **Inorder Split:** Use the `value_to_index` map to find the root's index in the `inorder` array. The elements to the left form the left subtree, and the elements to the right form the right subtree.
+   - **Recursive Calls:** Construct the left and right subtrees:
+     - **Left Subtree:** Start from the next element in the `preorder` array, with size determined by the left portion of the `inorder` array.
+     - **Right Subtree:** Start after the left subtree in the `preorder` array, with size determined by the right portion of the `inorder` array.
+
+3. **TreeNode Construction:**  
+   Create a `TreeNode` with the root value, and attach the left and right subtrees.
+
+
+```python
+def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+    # Create a map for quick index lookup in the inorder array
+    value_to_index = {val: idx for idx, val in enumerate(inorder)}
+
+    # Helper function to recursively build the tree
+    def build_tree(preorder_index, inorder_start, size):
+        if size <= 0:
+            return None  # Base case: empty subtree
+
+        # Identify the root
+        root_value = preorder[preorder_index]
+        inorder_root_index = value_to_index[root_value]
+        left_subtree_size = inorder_root_index - inorder_start
+
+        # Recursively construct the left and right subtrees
+        left = build_tree(preorder_index + 1, inorder_start, left_subtree_size)
+        right = build_tree(preorder_index + 1 + left_subtree_size, inorder_root_index + 1, size - 1 - left_subtree_size)
+
+        # Return the constructed TreeNode
+        return TreeNode(root_value, left, right)
+
+    # Initiate the recursive construction
+    return build_tree(0, 0, len(preorder))
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`
+  - Building the `value_to_index` map: `O(n`), where `n` is the number of nodes.
+  - Recursive Tree Construction: Each node is visited once, resulting in `O(n)`.
+
+- Space Complexity: `O(n)`
+  - `value_to_index` map: `O(n)`.
+  - Recursive Call Stack: `O(h)`, where `h` is the height of the tree (worst case `O(n)` for a skewed tree).
