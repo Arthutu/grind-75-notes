@@ -3623,3 +3623,57 @@ def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
 
 - Time Complexity: `O(n)`. Each node is visited once during the traversal.
 - Space Complexity: `O(n)`. In the worst case, the queue can contain all nodes at the last level of the tree, which is proportional to `n` for a balanced binary tree.
+
+## Longest Palindromic Substring
+[LeetCode Question](https://leetcode.com/problems/longest-palindromic-substring)
+
+### Solution
+
+The approach involves treating each character (and the space between two characters) as a potential center of a palindrome. From each center, expand outward while the characters on both sides are equal. Track the longest palindrome during this process.
+
+### Steps
+
+1. **Expand from Center:**  
+   - Define a helper function `expand_from_center(left, right)` that expands outward from the given indices as long as the characters are equal. This function returns the longest palindrome substring for the given center.
+
+2. **Iterate Over Possible Centers:**  
+   - For each character in the string, consider it as a center for an odd-length palindrome.
+   - For each pair of consecutive characters, consider them as a center for an even-length palindrome.
+
+3. **Update Longest Palindrome:**  
+   - Compare the lengths of palindromes returned by the helper function for odd and even centers.
+   - Keep track of the longest palindrome found.
+
+```python
+def longestPalindrome(self, s: str) -> str:
+    if len(s) <= 1:
+        return s
+
+    def expand_from_center(left, right):
+        while left >= 0 and right < len(s) and s[left] == s[right]:
+            left -= 1
+            right += 1
+        # Return the longest palindrome substring for this center
+        return s[left + 1:right]
+
+    max_str = s[0]  # At least one character is always a palindrome
+
+    for i in range(len(s) - 1):
+        # Check for odd-length palindromes
+        odd = expand_from_center(i, i)
+        # Check for even-length palindromes
+        even = expand_from_center(i, i + 1)
+
+        # Update the maximum palindrome if a longer one is found
+        if len(odd) > len(max_str):
+            max_str = odd
+        if len(even) > len(max_str):
+            max_str = even
+
+    return max_str
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n^2)`. For each character, we expand outward to check for palindromes, which takes linear time in the worst case. Since this is done for all characters, the total time complexity is quadratic.
+- Space Complexity: `O(1)`. The function uses a constant amount of extra space, as it only tracks indices and the maximum palindrome string.
