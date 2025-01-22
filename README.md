@@ -3677,3 +3677,55 @@ def longestPalindrome(self, s: str) -> str:
 
 - Time Complexity: `O(n^2)`. For each character, we expand outward to check for palindromes, which takes linear time in the worst case. Since this is done for all characters, the total time complexity is quadratic.
 - Space Complexity: `O(1)`. The function uses a constant amount of extra space, as it only tracks indices and the maximum palindrome string.
+
+## Unique Paths
+[LeetCode Question](https://leetcode.com/problems/unique-paths)
+
+### Solution
+
+This is a dynamic programming (DP) problem where the goal is to compute the number of unique ways a robot can move from the top-left corner of a grid to the bottom-right corner, given that it can only move right or down.
+
+### Steps
+
+1. **State Definition:**  
+   Let `dp[r][c]` represent the number of unique paths to reach cell `(r, c)`.
+
+2. **State Transition:**  
+   To reach cell `(r, c)`, the robot can come from:
+   - The cell above `(r - 1, c)`, or
+   - The cell to the left `(r, c - 1)`.  
+   
+   Hence, `dp[r][c] = dp[r-1][c] + dp[r][c-1]`
+
+3. **Base Cases:**  
+   - For the first row (`r = 0`), all cells can only be reached from the left. Thus, `dp[0][c] = 1` for all `c`.
+   - For the first column (`c = 0`), all cells can only be reached from above. Thus, `dp[r][0] = 1` for all `r`.
+
+4. **Final Answer:**  
+   The value at `dp[m-1][n-1]` (bottom-right corner) represents the total number of unique paths.
+
+
+```python
+def uniquePaths(self, m: int, n: int) -> int:
+    # Initialize a 2D DP array with dimensions m x n
+    dp = [[0 for _ in range(n)] for _ in range(m)]
+
+    # Set base cases for the first row and first column
+    for c in range(n):
+        dp[0][c] = 1  # First row
+    for r in range(m):
+        dp[r][0] = 1  # First column
+
+    # Fill the DP table using the state transition
+    for r in range(1, m):
+        for c in range(1, n):
+            dp[r][c] = dp[r - 1][c] + dp[r][c - 1]
+
+    # Return the value at the bottom-right corner
+    return dp[-1][-1]
+```
+
+**Complexity Analysis**
+
+- Time Complexity: O(n * m). We iterate through all the cells in the grid to compute their values.
+- Space Complexity: O(n * m). The `dp` table requires space proportional to the size of the grid.
