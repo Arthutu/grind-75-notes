@@ -3796,7 +3796,7 @@ def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNod
   - Recursive Call Stack: `O(h)`, where `h` is the height of the tree (worst case `O(n)` for a skewed tree).
 
 ## Container With Most Water
-[LeetCode Question](https://leetcode.com/problems/container-with-most-water/description/)
+[LeetCode Question](https://leetcode.com/problems/container-with-most-water)
 
 ### Solution
 
@@ -3844,3 +3844,67 @@ def maxArea(self, height: List[int]) -> int:
 
 - Time Complexity: `O(n)`. The while loop runs until the two pointers meet, which takes `O(n)` time.
 - Space Complexity: `O(1)`. The algorithm uses only a few variables for tracking pointers and area.
+
+## Letter Combinations of a Phone Number
+[LeetCode Question](https://leetcode.com/problems/letter-combinations-of-a-phone-number)
+
+### Solution
+
+The problem involves generating all possible letter combinations that the digits in a phone number can represent. This is a combinatorial problem that can be efficiently solved using backtracking.
+
+#### Steps
+
+1. **Mapping Digits to Letters**:
+   Create a dictionary to map digits to their corresponding letters, as found on a phone keypad. For example:
+   ```python
+   digit_to_letters = {
+    '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+    '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+   }
+   ```
+
+2. **Backtracking**:
+   Use a recursive function to explore all possible combinations:
+   - Start with an empty string as the current combination.
+   - For each digit, iterate over its corresponding letters and add one letter at a time to the current combination.
+   - If the combination's length matches the number of digits in the input, add it to the result list.
+
+3. **Base Case**:
+   If the input is empty, return an empty list.
+
+```python
+def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+
+        KEYBOARD = {
+            "2": "abc",
+            "3": "def",
+            "4": "ghi",
+            "5": "jkl",
+            "6": "mno",
+            "7": "pqrs",
+            "8": "tuv",
+            "9": "wxyz",
+        }
+
+        res = []
+
+        def dfs(start_index, path):
+            if start_index == len(digits):
+                res.append("".join(path))
+                return
+
+            next_number = digits[start_index]
+            for letter in KEYBOARD[next_number]:
+                path.append(letter)
+                dfs(start_index + 1, path)
+                path.pop()
+
+        dfs(0, [])
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(4^n * n)`. Each digit can map to up to 4 letters, resulting in `4^n` combinations. Constructing each combination takes `O(n)` time to concatenate strings.
+- Space Complexity: `O(4^n)`. This accounts for the space used to store all combinations in the result list.
