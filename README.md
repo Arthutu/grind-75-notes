@@ -3908,3 +3908,69 @@ def letterCombinations(self, digits: str) -> List[str]:
 
 - Time Complexity: `O(4^n * n)`. Each digit can map to up to 4 letters, resulting in `4^n` combinations. Constructing each combination takes `O(n)` time to concatenate strings.
 - Space Complexity: `O(4^n)`. This accounts for the space used to store all combinations in the result list.
+
+## Word Search
+[LeetCode Question](https://leetcode.com/problems/word-search)
+
+### Solution
+
+To solve this problem, we employ Depth-First Search (DFS). The intuition is to explore all potential paths from a starting cell to see if we can spell out the word.
+
+#### Steps
+
+1. **Start at Every Cell**: Consider every cell in the grid as a potential starting point of the word.
+2. **Explore Adjacent Cells**: From the starting cell, recursively check adjacent cells to match the next character of the word.
+3. **Mark Visited Cells**: Temporarily mark a cell as visited to avoid revisiting it during the current path.
+4. **Backtracking**: After exploring all possibilities from a cell, reset it to its original state.
+5. **Termination**: 
+   - If all characters are matched, return `True`.
+   - If no valid path exists, return `False`.
+
+This logic is implemented in a recursive `search_word` function, which explores all possible paths from a given cell.
+
+```python
+def exist(self, board: List[List[str]], word: str) -> bool:
+    # Depth-first search function to search the word in the board
+    def search_word(x: int, y: int, index: int) -> bool:
+        # Check if the last character matches
+        if index == len(word) - 1:
+            return board[x][y] == word[index]
+        # If current character does not match the word character at index, return False
+        if board[x][y] != word[index]:
+            return False
+        # Store the current character and mark the cell as visited with "0"
+        temp = board[x][y]
+        board[x][y] = "0"
+        # Define directions for exploration: up, right, down, left
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        # Loop through all possible directions
+        for dx, dy in directions:
+            new_x, new_y = x + dx, y + dy
+            # Check boundaries and if the next cell is not visited
+            if 0 <= new_x < rows and 0 <= new_y < cols and board[new_x][new_y] != "0":
+                # Recur with the new position and the next character index
+                if search_word(new_x, new_y, index + 1):
+                    return True
+        # Restore the current cell's value after exploring all directions
+        board[x][y] = temp
+        return False
+
+    # Retrieve the dimensions of the board
+    rows, cols = len(board), len(board[0])
+    # Iterate through each cell in the board, trying to match the first character
+    for i in range(rows):
+        for j in range(cols):
+            # If the first character matches and the word can be found from here, return True
+            if board[i][j] == word[0] and search_word(i, j, 0):
+                return True
+    # If the word cannot be found, return False
+    return False
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(m * n * 3^(l-1))`
+  - `m * n`: We start DFS from each cell.
+  - `3^(l-1)`: At each step, there are at most 3 valid directions to explore (excluding the direction we came from).
+  - `l`: Length of the word.
+- Space Complexity: `O(l)`. The recursion stack can go as deep as the length of the word.
