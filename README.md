@@ -3794,3 +3794,53 @@ def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNod
 - Space Complexity: `O(n)`
   - `value_to_index` map: `O(n)`.
   - Recursive Call Stack: `O(h)`, where `h` is the height of the tree (worst case `O(n)` for a skewed tree).
+
+## Container With Most Water
+[LeetCode Question](https://leetcode.com/problems/container-with-most-water/description/)
+
+### Solution
+
+To solve this problem efficiently, we use the **two-pointers technique**:
+
+1. **Initialize Pointers:**  
+   Place one pointer (`left`) at the beginning of the array and the other pointer (`right`) at the end.
+
+2. **Calculate Area:**  
+   The area between the two pointers is determined by the formula:  
+   $`\text{Area} = (\text{right} - \text{left}) \times \min(\text{height[left]}, \text{height[right]})`$
+   
+   Keep track of the maximum area encountered so far.
+
+4. **Move the Pointer with the Shorter Line:**  
+   - If `height[left] < height[right]`, move the `left` pointer inward.  
+   - Otherwise, move the `right` pointer inward.  
+   
+   This ensures that we explore configurations that might result in a larger area, as moving the taller line would not increase the area.
+
+5. **Repeat Until Pointers Meet:**  
+   Continue the process until the two pointers converge.
+
+
+```python
+def maxArea(self, height: List[int]) -> int:
+    left, right, max_area = 0, len(height) - 1, 0
+
+    while left < right:
+        # Calculate the current area
+        current_area = (right - left) * min(height[right], height[left])
+        # Update the maximum area
+        max_area = max(max_area, current_area)
+
+        # Move the pointer with the shorter line
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+
+    return max_area
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. The while loop runs until the two pointers meet, which takes `O(n)` time.
+- Space Complexity: `O(1)`. The algorithm uses only a few variables for tracking pointers and area.
