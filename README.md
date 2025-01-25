@@ -4104,3 +4104,65 @@ def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
 
 - Time Complexity: `O(V + E)`, where `V` is the number of vertices (or nodes) and `E` is the number of edges.
 - Space Complexity: `O(V + E)`. The graph and queue require `O(V + E)` space.
+
+## Task Scheduler
+[LeetCode Question](https://leetcode.com/problems/task-scheduler)
+
+### Solution
+
+To solve the problem, we need to determine the minimum time required to execute all tasks while adhering to the cooling period `n` between two identical tasks. The key idea is to use a **priority queue (max heap)** to schedule the most frequent tasks first, ensuring that we utilize the cooling period efficiently.
+
+### Steps
+
+1. **Count Task Frequencies**:
+   - Use a `Counter` to calculate the frequency of each task.
+
+2. **Max Heap**:
+   - Push the negative frequencies of tasks into a max heap (Python's `heapq` is a min heap, so we use negative values to simulate a max heap).
+
+3. **Queue for Cooling**:
+   - Use a `deque` to track tasks that are cooling down. Each entry in the queue contains the task's remaining count and the time it will be available again.
+
+4. **Simulate Time**:
+   - At each time step, either execute a task from the heap or wait (if no tasks are available).
+   - If a task is executed and still has remaining instances, add it to the cooling queue with its next available time.
+   - Check the cooling queue at each step to move tasks back into the heap when their cooling period ends.
+
+5. **Repeat Until All Tasks Are Executed**:
+   - Continue the process until both the heap and the cooling queue are empty.
+
+```python
+from collections import Counter, deque
+import heapq
+
+def leastInterval(self, tasks: List[str], n: int) -> int:
+    # Count the frequency of each task
+    count = Counter(tasks)
+    # Create a max heap with negative frequencies
+    maxHeap = [-cnt for cnt in count.values()]
+    heapq.heapify(maxHeap)
+
+    time = 0
+    # Queue to manage cooling tasks
+    q = deque()  # Stores pairs of [remaining count, available time]
+
+    while maxHeap or q:
+        time += 1
+
+        # Execute the most frequent task if available
+        if maxHeap:
+            cnt = 1 + heapq.heappop(maxHeap)  # Decrease the task count
+            if cnt:  # If there are remaining instances of the task
+                q.append([cnt, time + n])  # Add it to the cooling queue
+
+        # Check if any task in the cooling queue is ready to be executed
+        if q and q[0][1] == time:
+            heapq.heappush(maxHeap, q.popleft()[0])  # Move task back to heap
+
+    return time
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(T * log T)`, where `T` is the number of tasks. Each insertion or removal from the heap takes `O(log T)`, and we process each task at most twice (once in the heap and once in the queue).
+- Space Complexity: `O(T)`. Space is used for the heap, the cooling queue, and the task frequency counter.
