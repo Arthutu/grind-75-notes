@@ -3974,3 +3974,65 @@ def exist(self, board: List[List[str]], word: str) -> bool:
   - `3^(l-1)`: At each step, there are at most 3 valid directions to explore (excluding the direction we came from).
   - `l`: Length of the word.
 - Space Complexity: `O(l)`. The recursion stack can go as deep as the length of the word.
+
+## Find All Anagrams in a String
+[LeetCode Question](https://leetcode.com/problems/find-all-anagrams-in-a-string)
+
+### Solution
+
+This problem can be efficiently solved using the **sliding window** technique. The idea is to maintain a window of the same size as the target string `p` and check whether the characters in the window form an anagram of `p`. We use two frequency arrays to compare the character counts in the window and `p`.
+
+#### Steps
+
+1. **Initialization**:
+   - Create two frequency arrays: one for the target string `p` (`check_counter`) and another for the current window in `s` (`window`).
+   - Populate these arrays for the first `p_len` characters of `s`.
+
+2. **Sliding Window**:
+   - Slide the window one character at a time:
+     - Remove the leftmost character from the window.
+     - Add the next character to the window.
+   - Compare the two frequency arrays. If they match, the current window is an anagram, and we record the starting index.
+
+3. **Result**:
+   - Return all starting indices of anagrams found in `s`.
+
+```python
+def findAnagrams(self, s: str, p: str) -> List[int]:
+    s_len, p_len = len(s), len(p)
+
+    if s_len < p_len:
+        return []
+
+    res = []
+    check_counter = [0] * 26  # Frequency array for `p`
+    window = [0] * 26  # Frequency array for the current window in `s`
+    a = ord("a")  # ASCII value of 'a'
+
+    # Initialize the frequency arrays
+    for i in range(p_len):
+        check_counter[ord(p[i]) - a] += 1
+        window[ord(s[i]) - a] += 1
+
+    # Check if the initial window matches
+    if window == check_counter:
+        res.append(0)
+
+    # Slide the window across the string
+    for i in range(p_len, s_len):
+        # Remove the leftmost character from the window
+        window[ord(s[i - p_len]) - a] -= 1
+        # Add the new character to the window
+        window[ord(s[i]) - a] += 1
+
+        # Check if the current window matches `check_counter`
+        if window == check_counter:
+            res.append(i - p_len + 1)
+
+    return res
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. We traverse the string `s` once, updating the frequency arrays in constant time for each character.
+- Space Complexity: `O(1)`. The frequency arrays have a fixed size of 26 (for lowercase English letters), making the space usage constant.
