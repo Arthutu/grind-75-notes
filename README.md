@@ -4036,3 +4036,71 @@ def findAnagrams(self, s: str, p: str) -> List[int]:
 
 - Time Complexity: `O(n)`. We traverse the string `s` once, updating the frequency arrays in constant time for each character.
 - Space Complexity: `O(1)`. The frequency arrays have a fixed size of 26 (for lowercase English letters), making the space usage constant.
+
+## Minimum Height Trees
+[LeetCode Question](https://leetcode.com/problems/minimum-height-trees/)
+
+### Solution
+
+The key insight for solving this problem is understanding that the root of a Minimum Height Tree (MHT) will be near the center of the tree. If we pick a node on the periphery of the tree (like a leaf), the height will be larger because it takes more edges to reach the opposite side of the tree. The MHTs can be found by iteratively trimming the leaves until one or two nodes remain, which will be our answer.
+
+This process is similar to peeling an onion: we remove the outer layer (leaves) one by one until we reach the core. Here's the step-by-step breakdown:
+
+1. **Identify Leaf Nodes**:
+   - Leaf nodes are nodes with only one connection (degree of 1).
+   
+2. **Trim Leaves**:
+   - Remove the leaf nodes and their edges, exposing a new layer of leaf nodes.
+
+3. **Repeat Until Core**:
+   - Continue the process until one or two nodes remain. These nodes will be the roots of the MHTs.
+
+**Why One or Two Nodes?**
+
+- A tree with an odd number of nodes will have one central node as the root.
+- A tree with an even number of nodes will have two central nodes.
+
+This approach uses a **breadth-first search (BFS)** to trim the leaves layer by layer. A queue is employed to manage the current set of leaves, and the degree of each node is tracked to identify new leaves.
+
+
+```python
+from collections import defaultdict, deque
+
+def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+    if n == 1:
+        return [0]  # A single node is its own MHT
+
+    # Build the graph and track degrees
+    graph = defaultdict(list)
+    degrees = [0] * n
+
+    for node1, node2 in edges:
+        graph[node1].append(node2)
+        graph[node2].append(node1)
+        degrees[node1] += 1
+        degrees[node2] += 1
+
+    # Initialize the queue with all leaf nodes
+    leaves_queue = deque(i for i in range(n) if degrees[i] == 1)
+
+    # Perform BFS to trim leaves layer by layer
+    while leaves_queue:
+        min_height_trees = []  # Stores the current layer of leaves
+
+        for _ in range(len(leaves_queue)):
+            current_node = leaves_queue.popleft()
+            min_height_trees.append(current_node)
+
+            # Reduce the degree of neighbors and check for new leaves
+            for neighbor in graph[current_node]:
+                degrees[neighbor] -= 1
+                if degrees[neighbor] == 1:
+                    leaves_queue.append(neighbor)
+
+    return min_height_trees
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(V + E)`, where `V` is the number of vertices (or nodes) and `E` is the number of edges.
+- Space Complexity: `O(V + E)`. The graph and queue require `O(V + E)` space.
