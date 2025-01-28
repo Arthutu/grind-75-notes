@@ -4279,3 +4279,53 @@ class LRUCache:
 - Time Complexity: `O(1)` for both `get` and `put` operations.
   - Hash map lookups, node removal, and node insertion are all `O(1)`.
 - Space Complexity: `O(capacity)` for storing up to `capacity` nodes and their references in the hash map and doubly linked list.
+
+## Kth Smallest Element in a BST
+[LeetCode Question](https://leetcode.com/problems/kth-smallest-element-in-a-bst/)
+
+### Solution
+
+The task is to find the `k-th` smallest element in a Binary Search Tree (BST). The BST property ensures that an **in-order traversal** (left, root, right) yields the elements in sorted order. Thus, the `k-th` smallest element corresponds to the `k-th` node visited during an in-order traversal.
+
+## Approach
+To optimize, we use an **iterative in-order traversal** with a stack:
+
+1. Traverse to the leftmost node, pushing nodes onto the stack.
+2. Pop nodes from the stack one by one, decrementing `k` each time.
+3. When `k = 0`, the current node is the `k-th` smallest element.
+
+This approach avoids unnecessary traversal beyond the `k-th` node, making it efficient.
+
+```python
+def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+    stack = []
+
+    # Iterative in-order traversal
+    while root or stack:
+        # Traverse to the leftmost node
+        while root:
+            stack.append(root)
+            root = root.left
+
+        # Process the current node
+        root = stack.pop()
+        k -= 1
+        if k == 0:
+            return root.val
+
+        # Move to the right subtree
+        root = root.right
+```
+
+**Complexity Analysis**
+
+- Time Complexity
+  - Worst Case: `O(H + k)`, where `H` is the height of the tree.
+  - Traversing to the leftmost node takes `O(H)`.
+  - Visiting `k` nodes to find the result adds `O(k)`.
+- **Average Case**: For a balanced BST, `H ~= log(N)`, so the time complexity is: `O(log(N) + k)`
+
+### Space Complexity
+- **Worst Case**: `O(H)`, where `H` is the height of the tree.
+  - The stack stores nodes up to the height of the tree.
+- **Average Case**: For a balanced BST, `H ~= log(N)`, so the space complexity is: `O(log(N))`
