@@ -4166,3 +4166,116 @@ def leastInterval(self, tasks: List[str], n: int) -> int:
 
 - Time Complexity: `O(T * log T)`, where `T` is the number of tasks. Each insertion or removal from the heap takes `O(log T)`, and we process each task at most twice (once in the heap and once in the queue).
 - Space Complexity: `O(T)`. Space is used for the heap, the cooling queue, and the task frequency counter.
+
+## LRU Cache
+[LeetCode Question](https://leetcode.com/problems/lru-cache)
+
+### Solution
+
+The **Least Recently Used (LRU)** cache requires constant-time `get` and `put` operations while maintaining the order of access. This can be efficiently implemented using a combination of a **hash map** and a **doubly linked list**.
+
+### Key Insights
+
+1. **Hash Map**:
+   - Stores the key-value pairs for `O(1)` access.
+   - Instead of storing the value directly, it stores a reference to a node in the doubly linked list.
+
+2. **Doubly Linked List**:
+   - Maintains the order of usage:
+     - The most recently used node is at the head.
+     - The least recently used node is at the tail.
+   - Supports `O(1)` insertion and removal of nodes.
+
+### Operations
+
+1. **`get(key)`**:
+   - If the key exists in the cache, move the corresponding node to the head of the list (marking it as most recently used) and return its value.
+   - If the key does not exist, return `-1`.
+
+2. **`put(key, value)`**:
+   - If the key exists, update its value and move the node to the head of the list.
+   - If the key does not exist:
+     - Add a new node to the head of the list.
+     - If the cache exceeds its capacity, remove the tail node (least recently used) and delete it from the hash map.
+
+
+```python
+class Node:
+    def __init__(self, key=0, value=0):
+        self.key = key
+        self.value = value
+        self.prev = None
+        self.next = None
+
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.cache = {}  # Hash map to store key-node pairs
+        self.head = Node()  # Dummy head
+        self.tail = Node()  # Dummy tail
+        self.capacity = capacity
+        self.size = 0
+
+        # Initialize doubly linked list
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def _remove_node(self, node):
+        """Removes a node from the doubly linked list."""
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    def _add_to_head(self, node):
+        """Adds a node to the head of the doubly linked list."""
+        node.prev = self.head
+        node.next = self.head.next
+        self.head.next.prev = node
+        self.head.next = node
+
+    def _move_to_head(self, node):
+        """Moves an existing node to the head of the doubly linked list."""
+        self._remove_node(node)
+        self._add_to_head(node)
+
+    def _remove_tail(self):
+        """Removes the tail node (least recently used)."""
+        node = self.tail.prev
+        self._remove_node(node)
+        return node
+
+    def get(self, key: int) -> int:
+        if key not in self.cache:
+            return -1
+
+        # Move the accessed node to the head
+        node = self.cache[key]
+        self._move_to_head(node)
+
+        return node.value
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            # Update the value and move the node to the head
+            node = self.cache[key]
+            node.value = value
+            self._move_to_head(node)
+        else:
+            # Create a new node
+            node = Node(key, value)
+            self.cache[key] = node
+            self._add_to_head(node)
+
+            self.size += 1
+
+            # If the cache exceeds capacity, remove the least recently used node
+            if self.size > self.capacity:
+                removed_node = self._remove_tail()
+                del self.cache[removed_node.key]
+                self.size -= 1
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(1)` for both `get` and `put` operations.
+  - Hash map lookups, node removal, and node insertion are all `O(1)`.
+- Space Complexity: `O(capacity)` for storing up to `capacity` nodes and their references in the hash map and doubly linked list.
