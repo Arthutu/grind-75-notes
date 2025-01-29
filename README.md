@@ -4400,3 +4400,75 @@ def minWindow(s: str, t: str) -> str:
 
 - Time Complexity: `O(m + n)`. The algorithm processes each character in `s` once, and updating counters is an `O(1)` operation, leading to linear time complexity.
 - Space Complexity: `O(C)`, where `C` is the number of unique characters in `s` and `t`.
+
+## Serialize and Deserialize Binary Tree
+[LeetCode Question](https://leetcode.com/problems/serialize-and-deserialize-binary-tree)
+
+### Solution
+
+The problem requires converting a binary tree into a string format (serialization) and reconstructing the tree from the string (deserialization).
+
+#### Serialization
+- We use a **Depth-First Search (DFS)** approach to traverse the tree.
+- If a node exists, append its value to the serialized string.
+- If a node is `None`, append `'x'` to represent a null node.
+- The traversal follows **preorder (root → left → right)**.
+- The serialized values are stored in a list and joined into a space-separated string.
+
+#### Deserialization
+- We split the serialized string into a list of tokens.
+- Using **DFS**, we reconstruct the tree:
+  - If the token is `'x'`, return `None` (indicating a null node).
+  - Otherwise, create a new `TreeNode` with the value and recursively build its left and right children.
+
+This approach ensures that we reconstruct the tree in the exact order it was serialized.
+
+```python
+class Codec:
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+        
+        :type root: TreeNode
+        :rtype: str
+        """
+        res = []
+
+        def dfs(root):
+            if not root:
+                res.append("x")
+                return
+            
+            res.append(str(root.val))
+            dfs(root.left)
+            dfs(root.right)
+        
+        dfs(root)
+        return " ".join(res)
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+        
+        :type data: str
+        :rtype: TreeNode
+        """
+        def dfs(nodes):
+            val = next(nodes)
+            if val == "x":
+                return None
+            
+            cur = TreeNode(int(val))
+            cur.left = dfs(nodes)
+            cur.right = dfs(nodes)
+            return cur
+        
+        return dfs(iter(data.split()))
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. Both serialization and deserialization visit each node exactly once
+- Space Complexity:
+  - The serialized string requires `O(n)` space.
+  - The recursion stack in DFS takes `O(h)`, where `h` is the tree height.
+    - Worst case (skewed tree): `O(n)`
+    - Best case (balanced tree): `O(log n)`
