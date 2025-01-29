@@ -4321,11 +4321,82 @@ def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
 
 - Time Complexity
   - Worst Case: `O(H + k)`, where `H` is the height of the tree.
-  - Traversing to the leftmost node takes `O(H)`.
-  - Visiting `k` nodes to find the result adds `O(k)`.
-- **Average Case**: For a balanced BST, `H ~= log(N)`, so the time complexity is: `O(log(N) + k)`
+    - Traversing to the leftmost node takes `O(H)`.
+    - Visiting `k` nodes to find the result adds `O(k)`.
+- Average Case: For a balanced BST, `H ~= log(N)`, so the time complexity is: `O(log(N) + k)`
 
-### Space Complexity
-- **Worst Case**: `O(H)`, where `H` is the height of the tree.
-  - The stack stores nodes up to the height of the tree.
-- **Average Case**: For a balanced BST, `H ~= log(N)`, so the space complexity is: `O(log(N))`
+- Space Complexity
+  - Worst Case: `O(H)`, where `H` is the height of the tree.
+    - The stack stores nodes up to the height of the tree.
+  - Average Case: For a balanced BST, `H ~= log(N)`, so the space complexity is: `O(log(N))`
+
+## Minimum Window Substring
+[LeetCode Question](https://leetcode.com/problems/minimum-window-substring)
+
+### Solution
+
+To tackle the "Minimum Window Substring" problem, we employ a sliding window approach combined with character frequency counting. This method allows us to efficiently find the smallest substring in `s` that contains all characters of `t`, including duplicates.
+
+**Algorithm Steps:**
+
+1. **Initialize Counters:**
+   - Use `Counter` from Python's `collections` module to count character frequencies in `t` (`target_counter`).
+   - Initialize another `Counter` (`window_counter`) to keep track of character frequencies within the current window in `s`.
+
+2. **Set Pointers and Variables:**
+   - `left`: Marks the start of the sliding window.
+   - `min_left`: Records the starting index of the minimum window found.
+   - `min_size`: Stores the size of the minimum window, initialized to infinity.
+   - `needed_char_count`: Counts how many characters in the current window match the required frequency in `t`.
+
+3. **Expand the Window:**
+   - Iterate over `s` with the `right` pointer.
+   - For each character at `right`, update `window_counter`.
+   - If the character is needed (i.e., its count in `window_counter` doesn't exceed its count in `target_counter`), increment `needed_char_count`.
+
+4. **Contract the Window:**
+   - While `needed_char_count` equals the length of `t` (indicating all required characters are present in the current window):
+     - Check if the current window size is smaller than `min_size`. If so, update `min_size` and `min_left`.
+     - Attempt to shrink the window from the left by incrementing `left`. Update `window_counter` and adjust `needed_char_count` accordingly.
+
+5. **Result:**
+   - After processing, if `min_left` remains `-1`, it means no valid window was found; return an empty string.
+   - Otherwise, return the substring starting at `min_left` with length `min_size`.
+
+
+```python
+from collections import Counter
+from math import inf
+
+def minWindow(s: str, t: str) -> str:
+    target_counter = Counter(t)
+    window_counter = Counter()
+    needed_char_count = 0
+    left = 0
+    min_left = -1
+    min_size = inf
+
+    for right, char in enumerate(s):
+        window_counter[char] += 1
+
+        if target_counter[char] >= window_counter[char]:
+            needed_char_count += 1
+
+        while needed_char_count == len(t):
+            if right - left + 1 < min_size:
+                min_size = right - left + 1
+                min_left = left
+
+            if target_counter[s[left]] >= window_counter[s[left]]:
+                needed_char_count -= 1
+
+            window_counter[s[left]] -= 1
+            left += 1
+
+    return "" if min_left < 0 else s[min_left : min_left + min_size]
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(m + n)`. The algorithm processes each character in `s` once, and updating counters is an `O(1)` operation, leading to linear time complexity.
+- Space Complexity: `O(C)`, where `C` is the number of unique characters in `s` and `t`.
