@@ -4472,3 +4472,71 @@ class Codec:
   - The recursion stack in DFS takes `O(h)`, where `h` is the tree height.
     - Worst case (skewed tree): `O(n)`
     - Best case (balanced tree): `O(log n)`
+
+## Trapping Rain Water
+[LeetCode Question](https://leetcode.com/problems/serialize-and-deserialize-binary-tree)
+
+### Solution
+
+The problem requires finding the total amount of water that can be trapped between bars of different heights after raining.
+
+#### Intuition
+The key observation is that the water trapped above a bar depends on the **minimum** of the tallest bars to its **left** and **right**. Specifically, for a bar at index `i`, the trapped water is:
+
+$\text{water}[i] = \max(0, \min(\text{maxLeft}[i], \text{maxRight}[i]) - \text{height}[i])\$
+
+#### Approach
+
+To efficiently compute the trapped water, we use **Dynamic Programming** with two auxiliary arrays:
+1. **`max_left[i]`** → Stores the maximum height encountered from the **left** up to index `i`.
+2. **`max_right[i]`** → Stores the maximum height encountered from the **right** up to index `i`.
+
+#### Steps
+1. **Precompute `max_left`**:
+   - Traverse the array from left to right.
+   - At each index `i`, `max_left[i]` stores the **maximum** height seen so far.
+
+2. **Precompute `max_right`**:
+   - Traverse the array from right to left.
+   - At each index `i`, `max_right[i]` stores the **maximum** height seen so far.
+
+3. **Calculate trapped water**:
+   - At each index `i`, compute the trapped water using:
+     $\text{water}[i] = \min(\text{maxLeft}[i], \text{maxRight}[i]) - \text{height}[i]$
+   - Sum the trapped water for all indices.
+
+```python
+from typing import List
+
+def trap(self, height: List[int]) -> int:
+    if not height:
+        return 0
+
+    n = len(height)
+
+    # Arrays to store max heights from left and right
+    max_left = [0] * n
+    max_right = [0] * n
+
+    # Compute max_left
+    max_left[0] = height[0]
+    for i in range(1, n):
+        max_left[i] = max(max_left[i - 1], height[i])
+
+    # Compute max_right
+    max_right[n - 1] = height[n - 1]
+    for i in range(n - 2, -1, -1):
+        max_right[i] = max(max_right[i + 1], height[i])
+
+    # Compute trapped water
+    trapped_water = sum(
+        min(max_left[i], max_right[i]) - height[i] for i in range(n)
+    )
+
+    return trapped_water
+```
+
+**Complexity Analysis**
+
+- Time Complexity: The algorithm processes the array three times (left pass, right pass, and final computation), leading to an overall complexity of `O(n)`.
+- Space Complexity: We use two auxiliary arrays (`max_left` and `max_right`), each of size `O(n)`, leading to an `O(n)` space complexity.
