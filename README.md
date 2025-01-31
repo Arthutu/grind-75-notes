@@ -4603,3 +4603,81 @@ class MedianFinder:
 - Space Complexity:
   - `addNum`: `O(n)`.
   - `findMedian`: `O(1)`.
+
+## Word Ladder
+[LeetCode Question](https://leetcode.com/problems/word-ladder)
+
+## Solution  
+
+The problem can be visualized as a **graph traversal** where each word is a **node**, and an edge exists between words that differ by a single character. Since we need to find the **shortest** transformation sequence, **Breadth-First Search (BFS)** is the ideal approach, as it explores all possibilities level by level, ensuring the first time we reach the `endWord`, we have used the minimum number of steps.
+
+To optimize this approach, we use **bidirectional BFS**, which starts searching from both `beginWord` and `endWord` simultaneously. This reduces the search space significantly, improving performance over a traditional BFS.
+
+### Approach  
+
+1. **Convert `wordList` to a set** for O(1) lookups.
+2. **Initialize two queues** for BFS, starting from both `beginWord` and `endWord`.
+3. **Maintain two maps** (`begin_visited` and `end_visited`) to track the shortest distance from each starting word.
+4. **Expand the smaller frontier first** to keep the search balanced.
+5. **Generate possible transformations** by changing one character at a time.
+6. **Check if a word appears in the opposite BFS frontier**—if so, return the sum of distances from both sides.
+7. If no transformation sequence is found, return `0`.
+
+```python
+from collections import deque
+
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: list[str]) -> int:
+        def extend_frontier(frontier, other_frontier, visited, other_visited, words):
+            for _ in range(len(frontier)):
+                word = frontier.popleft()
+                steps = visited[word]
+
+                word_chars = list(word)
+                for i in range(len(word_chars)):
+                    original_char = word_chars[i]
+                    for j in range(26):
+                        word_chars[i] = chr(ord('a') + j)
+                        transformed_word = "".join(word_chars)
+
+                        if transformed_word in other_visited:
+                            return steps + 1 + other_visited[transformed_word]
+
+                        if transformed_word in words and transformed_word not in visited:
+                            visited[transformed_word] = steps + 1
+                            frontier.append(transformed_word)
+
+                    word_chars[i] = original_char
+            return -1
+
+        words = set(wordList)
+        if endWord not in words:
+            return 0
+
+        begin_queue, end_queue = deque([beginWord]), deque([endWord])
+        begin_visited, end_visited = {beginWord: 0}, {endWord: 0}
+
+        while begin_queue and end_queue:
+            if len(begin_queue) <= len(end_queue):
+                result = extend_frontier(begin_queue, end_queue, begin_visited, end_visited, words)
+            else:
+                result = extend_frontier(end_queue, begin_queue, end_visited, begin_visited, words)
+
+            if result != -1:
+                return result + 1
+
+        return 0
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(L * 26 * N)`.
+  - `L` is the length of each word.
+  - `N` is the number of words in `wordList` .
+  - We iterate over `L` positions, trying 26 different letters, while checking at most `N` words.
+  - Bidirectional BFS roughly halves the search space, improving efficiency.
+
+- Space Complexity: `O(N)`.
+  - We store visited words in two dictionaries, requiring `O(N)` space.
+  - The queues hold at most `O(N)` elements in the worst case.
+
