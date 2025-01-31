@@ -4540,3 +4540,66 @@ def trap(self, height: List[int]) -> int:
 
 - Time Complexity: The algorithm processes the array three times (left pass, right pass, and final computation), leading to an overall complexity of `O(n)`.
 - Space Complexity: We use two auxiliary arrays (`max_left` and `max_right`), each of size `O(n)`, leading to an `O(n)` space complexity.
+
+## Find Median from Data Stream
+[LeetCode Question](https://leetcode.com/problems/find-median-from-data-stream)
+
+### Solution
+
+To efficiently find the median of a continuously growing data stream, we use two heaps:
+- A **max heap** (`small`) to store the **smaller** half of the numbers.
+- A **min heap** (`large`) to store the **larger** half of the numbers.
+
+This structure ensures that:
+- The largest number in the **smaller half** is at the top of `small`.
+- The smallest number in the **larger half** is at the top of `large`.
+- If the total count is **odd**, the median is the top of the heap with more elements.
+- If the total count is **even**, the median is the average of the tops of both heaps.
+
+### Approach
+
+1. **Adding a Number (`addNum`)**:
+   - Insert the new number into `small` (max heap) by **negating** its value (Python only has min heaps).
+   - Move the largest element of `small` to `large` (balancing step).
+   - Ensure that `small` has at least as many elements as `large`. If `large` has more elements, move the smallest element of `large` back to `small`.
+
+2. **Finding the Median (`findMedian`)**:
+   - If `small` and `large` are of equal size, return the average of their tops.
+   - If `small` has more elements, return its top.
+
+```python
+from heapq import heappush, heappop
+
+class MedianFinder:
+
+    def __init__(self):
+        # Max heap (store smaller half, negative values)
+        self.small = []
+        # Min heap (store larger half)
+        self.large = []
+
+    def addNum(self, num: int) -> None:
+        # Insert into max heap (small), stored as negative for max heap behavior
+        heappush(self.small, -num)
+        # Move the largest of small to large
+        heappush(self.large, -heappop(self.small))
+
+        # Ensure small has at least as many elements as large
+        if len(self.large) > len(self.small):
+            heappush(self.small, -heappop(self.large))
+
+    def findMedian(self) -> float:
+        if len(self.small) == len(self.large):
+            return (-self.small[0] + self.large[0]) / 2.0
+        return -self.small[0]
+```
+
+**Complexity Analysis**
+
+- Time Complexity:
+  - `addNum`: `O(log n)`. Each heap operation (heappush / heappop) takes `O(log n)` and we perform at most two heap operations per insertion.
+  - `findMedian`: `O(1)`. Peeking the top elements is `O(1)`.
+
+- Space Complexity:
+  - `addNum`: `O(n)`.
+  - `findMedian`: `O(1)`.
