@@ -4803,3 +4803,69 @@ class Solution:
 - Space Complexity: `O(n)`.
   - The cache stores results for each index `O(n)`.
   - The recursion stack in the worst case is `O(n)`.
+
+## Merge K Sorted Linked Lists
+[LeetCode Question](https://leetcode.com/problems/merge-k-sorted-lists)
+
+## Solution
+
+The goal is to merge `k` sorted linked lists into one sorted linked list. An efficient approach is to use a **min heap** to always select the smallest head among the lists.  
+
+### Approach
+
+1. **Initialization:**
+   - Create a min heap to store tuples of the form `(node.val, index, node)`, where `index` is the list identifier. This helps break ties when node values are equal.
+   - Push the head of each non-empty linked list into the heap.
+
+2. **Merging Process:**
+   - Use a dummy node to simplify list manipulation.
+   - While the heap is not empty:
+     - Pop the smallest element from the heap.
+     - Append this node to the merged list.
+     - If the popped node has a next node, push it into the heap.
+
+3. **Return Result:**
+   - The merged list is obtained from `dummy.next`.
+
+
+
+```python
+import heapq
+from typing import List, Optional
+
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        heap = []
+        
+        # Initialize the heap with the head of each list
+        for i, node in enumerate(lists):
+            if node:
+                heapq.heappush(heap, (node.val, i, node))
+        
+        dummy = ListNode()
+        curr = dummy
+        
+        # Merge nodes using the heap
+        while heap:
+            val, i, node = heapq.heappop(heap)
+            curr.next = node
+            curr = node
+            if node.next:
+                heapq.heappush(heap, (node.next.val, i, node.next))
+        
+        return dummy.next
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n log k)`.
+  - `n` is the total number of nodes across all lists.
+  - `k` is the number of linked lists.
+  - Each node is processed once, and each heap operation takes `O(log k)` time.
+- Space Complexity: `O(k)`. The heap stores at most one node from each list at a time.
