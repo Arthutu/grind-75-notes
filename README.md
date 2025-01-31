@@ -4681,3 +4681,63 @@ class Solution:
   - We store visited words in two dictionaries, requiring `O(N)` space.
   - The queues hold at most `O(N)` elements in the worst case.
 
+## Basic Calculator
+[LeetCode Question](https://leetcode.com/problems/basic-calculator/)
+
+## Solution  
+
+To evaluate an arithmetic expression with `+`, `-`, and parentheses, we manually parse the string while maintaining an **accumulator**, a **sign tracker**, and a **stack** for handling parentheses.  
+
+### Approach  
+
+1. **Iterate through the string** while processing characters:  
+   - If it's a digit, build the full number.
+   - If it's `+` or `-`, update the current sign.
+   - If it's `(`, push the current result and sign onto the stack (to save the state before the parentheses).
+   - If it's `)`, compute the value inside the parentheses and apply the saved sign.
+
+2. **Use a stack to handle nested expressions**  
+   - Whenever `(` is encountered, the current result and sign are saved on the stack.  
+   - When `)` is encountered, the calculated subexpression is multiplied by the saved sign and added to the saved result.
+
+3. **Final computation**  
+   - At the end of iteration, the accumulated `result` will be the final value.  
+   - Parentheses are processed during the traversal, ensuring correct precedence handling.
+
+```python
+class Solution:
+    def calculate(self, s: str) -> int:
+        stack = []
+        result, sign = 0, 1  # Accumulator and current sign
+        index, length = 0, len(s)
+
+        while index < length:
+            if s[index].isdigit():
+                number = 0
+                while index < length and s[index].isdigit():
+                    number = number * 10 + int(s[index])
+                    index += 1
+                result += sign * number
+                index -= 1  # Adjust since index was incremented in loop
+
+            elif s[index] == "+":
+                sign = 1
+            elif s[index] == "-":
+                sign = -1
+            elif s[index] == "(":
+                stack.append(result)
+                stack.append(sign)
+                result, sign = 0, 1  # Reset result for the new scope
+            elif s[index] == ")":
+                result *= stack.pop()  # Apply sign before parentheses
+                result += stack.pop()  # Add previous result before parentheses
+
+            index += 1
+
+        return result
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. We traverse the string once and perform constant-time operations for each character.
+- Space Complexity: `O(n)`. In the worst case, the stack stores `O(n)` elements (when dealing with deeply nested parentheses).
