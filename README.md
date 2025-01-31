@@ -4741,3 +4741,65 @@ class Solution:
 
 - Time Complexity: `O(n)`. We traverse the string once and perform constant-time operations for each character.
 - Space Complexity: `O(n)`. In the worst case, the stack stores `O(n)` elements (when dealing with deeply nested parentheses).
+
+##  Maximum Profit in Job Scheduling
+[LeetCode Question](https://leetcode.com/problems/maximum-profit-in-job-scheduling)
+
+## Solution  
+
+This problem requires us to **schedule non-overlapping jobs** while maximizing the total profit. The challenge is that jobs have start and end times, so a greedy approach won't necessarily yield the optimal solution.  
+
+### Approach  
+
+1. **Sort the Jobs**  
+   - First, sort jobs by their start times. This helps in efficiently finding the next available job when making decisions.
+
+2. **Use Binary Search for Optimization**  
+   - Instead of iterating over all possible next jobs, we use **binary search** (`bisect`) to quickly find the next job that starts **after the current job ends**.
+
+3. **Use Recursion with Memoization**  
+   - We define a recursive function `dfs(i)` that returns the maximum profit from index `i` onward.
+   - We have two choices at each step:  
+     - **Skip the current job** and move to the next (`dfs(i + 1)`).  
+     - **Take the current job** and add its profit to the result of the next available job (`dfs(nextJobIndex)`).  
+   - We use **memoization** (`cache`) to avoid redundant computations.
+
+```python
+from typing import List
+import bisect
+
+class Solution:
+    def jobScheduling(
+        self, startTime: List[int], endTime: List[int], profit: List[int]
+    ) -> int:
+        intervals = sorted(zip(startTime, endTime, profit))
+        cache = {}
+
+        def dfs(i):
+            if i == len(intervals):
+                return 0
+            if i in cache:
+                return cache[i]
+
+            # Option 1: Skip the current job
+            res = dfs(i + 1)
+
+            # Option 2: Take the current job and find the next non-overlapping job
+            nextIndex = bisect.bisect(intervals, (intervals[i][1], -1, -1))
+            res = max(res, intervals[i][2] + dfs(nextIndex))
+
+            cache[i] = res
+            return res
+
+        return dfs(0)
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n log n)`.
+  - Sorting takes `O(n log n)`.
+  - Each job is processed once with a binary search (`O(log n)`) and memoization ensures each job is computed only once.
+  - Hence, the total complexity is `O(n log n)`.
+- Space Complexity: `O(n)`.
+  - The cache stores results for each index `O(n)`.
+  - The recursion stack in the worst case is `O(n)`.
