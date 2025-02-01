@@ -4869,3 +4869,42 @@ class Solution:
   - `k` is the number of linked lists.
   - Each node is processed once, and each heap operation takes `O(log k)` time.
 - Space Complexity: `O(k)`. The heap stores at most one node from each list at a time.
+
+## Largest Rectangle in Histogram
+[LeetCode Question](https://leetcode.com/problems/largest-rectangle-in-histogram)
+
+## Solution
+
+The key idea is to use a **stack** to maintain a monotonically increasing sequence of heights. For each bar, we determine the maximum rectangle that can be formed with that bar as the smallest height. When a bar with a smaller height is encountered, we pop bars from the stack and calculate the area for each popped bar using the current index as the right boundary and the index stored with the popped bar as the left boundary. Finally, after processing all bars, we pop any remaining bars from the stack and compute their areas using the total length of the histogram.
+
+```python
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        n = len(heights)
+        stk = []
+        max_area = 0
+
+        for i, height in enumerate(heights):
+            start = i
+            # If the current height is less than the height of the bar at the top of the stack,
+            # then calculate the area for the bars in the stack until the stack is empty or a lower height is found.
+            while stk and height < stk[-1][0]:
+                h, j = stk.pop()
+                w = i - j
+                max_area = max(max_area, h * w)
+                start = j  # Update start to the leftmost index for the popped height
+            stk.append((height, start))
+        
+        # Process any remaining bars in the stack
+        while stk:
+            h, j = stk.pop()
+            w = n - j
+            max_area = max(max_area, h * w)
+        
+        return max_area
+```
+
+**Complexity Analysis**
+
+- Time Complexity: `O(n)`. Each bar is pushed and popped at most once.
+- Space Complexity: `O(n)`. The stack stores at most `n` bars.
